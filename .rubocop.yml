@@ -1,0 +1,12 @@
+SingleSpaceBeforeFirstArg:
+  Exclude:
+    - "**/metadata.rb"
+
+# In some cases it makes sense to let the line
+# exceed 80 characters, especially in specs.
+Metrics/LineLength:
+  Max: 100
+
+LeadingCommentSpace:
+  Enabled: false
+
