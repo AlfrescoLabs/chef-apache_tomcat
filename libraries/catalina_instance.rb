@@ -5,12 +5,17 @@ module CatalinaInstance
     include Poise
 
     provides :catalina_instance
-    actions :create, :destroy
+    actions :create
 
     attribute :name, kind_of: String
     attribute :prefix_root, kind_of: String, default: '/opt/tomcat'
     attribute :user, kind_of: String, default: 'tomcat'
     attribute :group, kind_of: String, default: 'tomcat'
+    attribute :setenv_variables, kind_of: Hash
+    attribute :setenv_template_source, kind_of: String, default: 'setenv.sh.erb'
+    attribute :cookbook, kind_of: String, default: 'catalina'
+    # TODO: Allow creation of default web and server XML
+    # TODO: Change this to use the poise template attribute type
   end
 
   class Provider < Chef::Provider
@@ -21,9 +26,12 @@ module CatalinaInstance
     def action_create
       notifying_block do
         create_instance_directories
-        # Copy files
-        # Scripts?
+        create_setenv_file
       end
+    end
+
+    def instance_dir
+      "#{new_resource.prefix_root}/#{new_resource.name}"
     end
 
     def create_instance_directories
@@ -35,7 +43,7 @@ module CatalinaInstance
       end
 
       # Main instance directory
-      directory "#{new_resource.prefix_root}/#{new_resource.name}" do
+      directory instance_dir do
         owner new_resource.user
         group new_resource.group
         mode '0755'
@@ -43,10 +51,21 @@ module CatalinaInstance
 
       # Sub-directories
       %w(bin conf lib logs temp webapps work).each do |dir|
-        directory "#{new_resource.prefix_root}/#{new_resource.name}/#{dir}" do
+        directory "#{instance_dir}/#{dir}" do
           owner new_resource.user
           group new_resource.group
           mode '0755'
+        end
+      end
+
+      def create_setenv_file
+        template "#{instance_dir}/bin/setenv.sh" do
+          source new_resource.setenv_template_source
+          owner new_resource.user
+          group new_resource.group
+          mode '0750'
+          cookbook new_resource.cookbook
+          variables new_resource.setenv_variables
         end
       end
     end

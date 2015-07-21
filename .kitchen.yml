@@ -13,5 +13,12 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[tomcat::default]
+      - recipe[java::default]
+      - recipe[catalina::default]
     attributes:
+      java:
+        install_flavor: 'oracle'
+        jdk_version:    '8'
+        java_home:      '/usr/lib/jvm/java-1.8.0-oracle'
+        oracle:
+          accept_oracle_download_terms: true

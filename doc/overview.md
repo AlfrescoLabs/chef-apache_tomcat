@@ -1,4 +1,6 @@
-TODO: Enter the cookbook description here.
+Manage installation and configuration of Apache Catalina Tomcat. Including
+support for multiple instances on a single server as well as flexible management
+of XML configuration files.
 
 ## Getting Started
 If you plan to fork the main cookbook repo please see [forking](#forking) below.
@@ -26,7 +28,145 @@ To edit this README:
 
 # Usage
 
-TODO: Enter usage details here
+## Install Apache Catalina Tomcat
+
+```ruby
+catalina 'tomcat' do
+  url 'http://archive.apache.org/dist/tomcat/...'
+  checksum 'sha256_checksum'
+  version '8.0.24
+end
+
+# Default version is 8.0.24. To use defaults, simply define:
+catalina 'tomcat'
+```
+
+## Create an instance
+
+```ruby
+catalina_instance 'instance1' do
+  setenv_variables config: [ 'export FOO=bar' ]
+end
+```
+
+## Create Custom Web XML
+
+```ruby
+# With defaults
+catalina_config 'web' do
+  type :web
+  instance 'instance1' # Reference to `catalina_instance` resource.
+  variables(
+    include_default_servlets: true,
+    include_default_session_config: true
+    include_default_mime_types: true
+    
+    # -- or --
+    
+    include_defaults: true
+  )
+end
+
+# Without defaults
+catalina_config 'web' do
+  type :web
+  instance 'instance1'
+  variables(
+    include_defaults: false,
+    include_default_mime_types: true,
+    servlets: [
+      {
+        'name'            => 'my_servlet',
+        'class'           => 'org.mycompany.MyServlet',
+        'init_params'      => { 'debug' => '1', 'listings' => true },
+        'load_on_startup' => '1'
+      },
+      # ... additional servlets ...
+    ],
+    servlet_mappings: [
+      {
+        'name'            => 'my_servlet',
+        'url-pattern'     => '/', # or an array: ['*.jsp', '*.jspx']
+      },
+      # ... additional servlet mappings ...
+    ],
+    filters: [
+      {
+        'name'            => 'my_filter',
+        'class'           => 'org.mycompany.MyFilter',
+        'init_params'     => { 'encoding' => 'UTF8', 'max' => '100' },
+        'async_supported' => true
+      },
+      # ... additional filters ...
+    ],
+    filter_mappings: [
+      {
+        'name' => 'my_filter',
+        'url_pattern' => '/*', # or an array: ['/pages/*', '/admin/*']
+        'dispatcher' => 'REQUEST' 
+      },
+      # ... additional filter_mappings ...
+    ],
+    session_timeout: 30,
+    welcome_file_list: ['index.jsp','index.html']
+  )
+end
+```
+
+## The above configuration yield the following web.xml:
+```xml
+    <servlet>
+        <servlet-name>my_servlet</servlet-name>
+        <servlet-class>org.mycompany.MyServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>1</param-value>
+        </init-param>
+        <init-param>
+            <param-name>listings</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>my_servlet</servlet-name>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>my_filter</filter-name>
+        <filter-class>org.mycompany.MyFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>max</param-name>
+            <param-value>100</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>my_filter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    
+    <mime-mapping>
+        <extension>123</extension>
+        <mime-type>application/vnd.lotus-1-2-3</mime-type>
+    </mime-mapping>
+    <!-- ... all of the mime-mappings ... -->
+```
 
 # Testing
 
