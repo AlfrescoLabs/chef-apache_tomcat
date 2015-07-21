@@ -5,3 +5,5 @@
 # Copyright (c) 2015 Drew A. Blessing, All Rights Reserved.
 
 catalina 'tomcat'
+
+catalina_instance 'foo'
