@@ -4,15 +4,15 @@
 #
 # Copyright (c) 2015 Drew A. Blessing, All Rights Reserved.
 
-catalina 'tomcat'
+apache_tomcat 'tomcat'
 
-catalina_instance 'foo' do
+apache_tomcat_instance 'foo' do
   setenv_options config: [ 'export FOO=bar' ]
   create_default_web_xml true
   create_default_server_xml true
 end
 
-# catalina_config 'web' do
+# apache_tomcat_config 'web' do
 #   type :web
 #   instance 'foo'
 #   config_options do
@@ -73,4 +73,4 @@ end
   # end
 # end
 
-# catalina_service 'foo'
+# apache_tomcat_service 'foo'

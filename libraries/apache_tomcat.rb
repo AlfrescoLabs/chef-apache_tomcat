@@ -1,10 +1,10 @@
 require 'poise'
 
-module Catalina
+module ApacheTomcat
   class Resource < Chef::Resource
     include Poise
 
-    provides :catalina
+    provides :apache_tomcat
     actions :install, :uninstall
 
     attribute :name, kind_of: String
@@ -23,7 +23,7 @@ module Catalina
   class Provider < Chef::Provider
     include Poise
 
-    provides :catalina
+    provides :apache_tomcat
 
     def action_install
       notifying_block do

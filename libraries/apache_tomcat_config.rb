@@ -1,10 +1,10 @@
 require 'poise'
 
-module CatalinaConfig
+module ApacheTomcatConfig
   class Resource < Chef::Resource
     include Poise
 
-    provides :catalina_config
+    provides :apache_tomcat_config
     actions :create
 
     attribute :name, kind_of: String
@@ -25,7 +25,7 @@ module CatalinaConfig
   class Provider < Chef::Provider
     include Poise
 
-    provides :catalina_config
+    provides :apache_tomcat_config
 
     def action_create
       filename = ''

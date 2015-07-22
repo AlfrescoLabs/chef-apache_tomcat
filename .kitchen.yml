@@ -14,7 +14,7 @@ suites:
   - name: default
     run_list:
       - recipe[java::default]
-      - recipe[catalina::default]
+      - recipe[apache_tomcat::default]
     attributes:
       java:
         install_flavor: 'oracle'
