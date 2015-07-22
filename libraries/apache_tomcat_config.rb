@@ -18,8 +18,17 @@ module ApacheTomcatConfig
     attribute :config,
               option_collector: true,
               template: true,
-              default_source: lazy { "#{type.to_s}.xml.erb" },
+              default_source: lazy { default_source_check },
               default_options: { include_defaults: true }
+
+    def default_source_check
+      if type == :entity && ((!config_source && !config_cookbook) || !config_content)
+        raise Chef::Exceptions::ValidationFailed,
+              'when config \'type\' is \':entity\', \'config_content\' or '\
+              '\'config_source\' and \'config_cookbook\' must be specified'
+      end
+      "#{type.to_s}.xml.erb"
+    end
   end
 
   class Provider < Chef::Provider
