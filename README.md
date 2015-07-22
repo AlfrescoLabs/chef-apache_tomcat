@@ -237,4 +237,4 @@ Add the following alias in `~/.bash_profile`.
 
 Maintainer:: Drew A. Blessing (<cookbooks@blessing.io>)
 
-License:: all_rights
+License:: Apache 2.0
