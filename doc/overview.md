@@ -262,11 +262,11 @@ apache_tomcat_config 'server' do
   limitations under the License.
 -->
 <Server port="9005" shutdown="SHUTDOWN" >
-    <Listener className="org.apache.apache_tomcat.startup.VersionLoggerListener" />
-    <Listener className="org.apache.apache_tomcat.core.AprLifecycleListener" SSLEngine="on" />
-    <Listener className="org.apache.apache_tomcat.core.JreMemoryLeakPreventionListener" />
-    <Listener className="org.apache.apache_tomcat.mbeans.GlobalResourcesLifecycleListener" />
-    <Listener className="org.apache.apache_tomcat.core.ThreadLocalLeakPreventionListener" />
+    <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+    <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
     <Listener className="org.mycompany.MyListener" />
     <Listener className="org.mycompany.MyComplexListener"
               SSLEngine="on"
@@ -277,8 +277,8 @@ apache_tomcat_config 'server' do
         &engine-custom;
 
         <Engine name="Catalina" defaultHost="localhost">
-            <Realm className="org.apache.apache_tomcat.realm.LockOutRealm">
-                <Realm className="org.apache.apache_tomcat.realm.UserDatabaseRealm"
+            <Realm className="org.apache.catalina.realm.LockOutRealm">
+                <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
                        resourceName="UserDatabase"
                        />
             </Realm>
