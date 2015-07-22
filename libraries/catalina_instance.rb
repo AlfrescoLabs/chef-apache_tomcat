@@ -11,11 +11,16 @@ module CatalinaInstance
     attribute :prefix_root, kind_of: String, default: '/opt/tomcat'
     attribute :user, kind_of: String, default: 'tomcat'
     attribute :group, kind_of: String, default: 'tomcat'
-    attribute :setenv_variables, kind_of: Hash
-    attribute :setenv_template_source, kind_of: String, default: 'setenv.sh.erb'
-    attribute :cookbook, kind_of: String, default: 'catalina'
-    # TODO: Allow creation of default web and server XML
-    # TODO: Change this to use the poise template attribute type
+    attribute :setenv,
+              option_collector: true,
+              template: true,
+              default_source: 'setenv.sh.erb'
+    attribute :create_default_web_xml,
+              kind_of: [TrueClass, FalseClass],
+              default: true
+    attribute :create_default_server_xml,
+              kind_of: [TrueClass, FalseClass],
+              default: true
   end
 
   class Provider < Chef::Provider
@@ -26,7 +31,9 @@ module CatalinaInstance
     def action_create
       notifying_block do
         create_instance_directories
-        create_setenv_file
+        create_setenv_file if new_resource.setenv_options
+        create_web_xml if new_resource.create_default_web_xml
+        create_server_xml  if new_resource.create_default_server_xml
       end
     end
 
@@ -59,13 +66,31 @@ module CatalinaInstance
       end
 
       def create_setenv_file
-        template "#{instance_dir}/bin/setenv.sh" do
-          source new_resource.setenv_template_source
+        file "#{instance_dir}/bin/setenv.sh" do
+          content new_resource.setenv_content
           owner new_resource.user
           group new_resource.group
           mode '0750'
-          cookbook new_resource.cookbook
-          variables new_resource.setenv_variables
+        end
+      end
+
+      def create_web_xml
+        catalina_config 'web' do
+          type :web
+          instance new_resource.name
+          config_options do
+            include_defaults true
+          end
+        end
+      end
+
+      def create_server_xml
+        catalina_config 'server' do
+          type :server
+          instance new_resource.name
+          config_options do
+            include_defaults true
+          end
         end
       end
     end

@@ -1,3 +1,9 @@
-<%- @config.each do |config_line| %>
+<%-
+if @config
+  @config.each do |config_line|
+%>
 <%= config_line %>
-<%- end %>
+<%-
+  end
+end
+%>
