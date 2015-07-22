@@ -170,6 +170,50 @@ end
     <!-- ... all of the mime-mappings ... -->
 ```
 
+## Create Custom Server XML
+
+```ruby
+# With defaults
+catalina_config 'server' do
+  type :server
+  instance 'instance1' # Reference to `catalina_instance` resource.
+  variables(
+    include_default_listeners: true,
+    include_default_user_database: true
+    include_default_connectors: true
+    include_default_engine: true
+
+    # -- or --
+
+    include_defaults: true
+  )
+end
+
+# With defaults
+catalina_config 'server' do
+  type :server
+  instance 'instance1'
+  variables(
+    include_defaults: false,
+    include_default_listeners: true,
+    include_default_engine: true,
+    server_port: 9005,
+    listeners: [
+      'org.mycompany.MyListener',
+      {
+        'class_name'  => 'org.mycompany.MyComplexListener',
+        'params'      => { 'SSLEngine' => 'on' }
+      },
+      ... additional listeners ...
+    ],
+    entities: {
+      'connector-http-9080' => 'connector-http-9080.xml',
+      'engine-custom'       => 'engine-custom.xml',
+      ... additional entities ...
+    }
+  )
+```
+
 # Testing
 
 ## Code Style
