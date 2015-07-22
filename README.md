@@ -70,6 +70,13 @@ catalina_config 'web' do
 end
 
 # Without defaults
+
+## First, disable default web.xml creation in the instance
+catalina_instance 'instance1' do
+  ...
+  create_default_web_xml false
+end
+
 catalina_config 'web' do
   type :web
   instance 'instance1'
@@ -198,6 +205,13 @@ catalina_config 'server' do
 end
 
 # With defaults
+
+## First, disable default web.xml creation in the instance
+catalina_instance 'instance1` do
+  ...
+  create_default_server_xml false
+end
+
 catalina_config 'server' do
   type :server
   instance 'instance1'
