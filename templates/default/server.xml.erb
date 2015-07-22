@@ -31,23 +31,25 @@
     <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
 <%- end %>
 <%-
-@listeners.each do |listener|
-  if listener.is_a?(String)
+if @listeners
+  @listeners.each do |listener|
+    if listener.is_a?(String)
 %>
     <Listener className="<%= listener %>" />
 <%-
-  elsif listener.is_a?(Hash)
+    elsif listener.is_a?(Hash)
 %>
     <Listener className="<%= listener['class_name'] %>"
 <%-
-    listener['params'].each do |name, value|
+      listener['params'].each do |name, value|
 %>
               <%= name %>="<%= value %>"
 <%-
-    end
+      end
 %>
               />
 <%-
+    end
   end
 end
 
