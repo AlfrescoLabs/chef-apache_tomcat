@@ -56,60 +56,68 @@ end
 catalina_config 'web' do
   type :web
   instance 'instance1' # Reference to `catalina_instance` resource.
-  variables(
-    include_default_servlets: true,
-    include_default_session_config: true
-    include_default_mime_types: true
+  config_options do
+    include_default_servlets true
+    include_default_session_config true
+    include_default_mime_types true
     
     # -- or --
     
-    include_defaults: true
-  )
+    include_defaults true
+  end 
 end
 
 # Without defaults
 catalina_config 'web' do
   type :web
   instance 'instance1'
-  variables(
-    include_defaults: false,
-    include_default_mime_types: true,
-    servlets: [
-      {
-        'name'            => 'my_servlet',
-        'class'           => 'org.mycompany.MyServlet',
-        'init_params'      => { 'debug' => '1', 'listings' => true },
-        'load_on_startup' => '1'
-      },
-      # ... additional servlets ...
-    ],
-    servlet_mappings: [
-      {
-        'name'            => 'my_servlet',
-        'url-pattern'     => '/', # or an array: ['*.jsp', '*.jspx']
-      },
-      # ... additional servlet mappings ...
-    ],
-    filters: [
-      {
-        'name'            => 'my_filter',
-        'class'           => 'org.mycompany.MyFilter',
-        'init_params'     => { 'encoding' => 'UTF8', 'max' => '100' },
-        'async_supported' => true
-      },
-      # ... additional filters ...
-    ],
-    filter_mappings: [
-      {
-        'name' => 'my_filter',
-        'url_pattern' => '/*', # or an array: ['/pages/*', '/admin/*']
-        'dispatcher' => 'REQUEST' 
-      },
-      # ... additional filter_mappings ...
-    ],
-    session_timeout: 30,
-    welcome_file_list: ['index.jsp','index.html']
-  )
+  config_options do
+    include_defaults false
+    include_default_mime_types true
+    servlets(
+      [
+        {
+          'name'            => 'my_servlet',
+          'class'           => 'org.mycompany.MyServlet',
+          'init_params'      => { 'debug' => '1', 'listings' => true },
+          'load_on_startup' => '1'
+        },
+        # ... additional servlets ...
+      ]
+    )
+    servlet_mappings(
+      [
+        {
+          'name'            => 'my_servlet',
+          'url-pattern'     => '/', # or an array: ['*.jsp', '*.jspx']
+        },
+        # ... additional servlet mappings ...
+      ]
+    )
+    filters(
+      [
+        {
+          'name'            => 'my_filter',
+          'class'           => 'org.mycompany.MyFilter',
+          'init_params'     => { 'encoding' => 'UTF8', 'max' => '100' },
+          'async_supported' => true
+        },
+        # ... additional filters ...
+      ]
+    )
+    filter_mappings(
+      [
+        {
+          'name' => 'my_filter',
+          'url_pattern' => '/*', # or an array: ['/pages/*', '/admin/*']
+          'dispatcher' => 'REQUEST' 
+        },
+        # ... additional filter_mappings ...
+      ]
+    )
+    session_timeout 30
+    welcome_file_list ['index.jsp','index.html']
+  end
 end
 ```
 
@@ -175,41 +183,101 @@ end
 catalina_config 'server' do
   type :server
   instance 'instance1' # Reference to `catalina_instance` resource.
-  variables(
-    include_default_listeners: true,
-    include_default_user_database: true
-    include_default_connectors: true
-    include_default_engine: true
+  config_options do
+    include_default_listeners true
+    include_default_user_database true
+    include_default_connectors true
+    include_default_engine true
     
     # -- or --
     
-    include_defaults: true
-  )
+    include_defaults true
+  end 
 end
 
 # With defaults
 catalina_config 'server' do
   type :server
   instance 'instance1' 
-  variables(
-    include_defaults: false,
-    include_default_listeners: true,
-    include_default_engine: true,
-    server_port: 9005,
-    listeners: [
-      'org.mycompany.MyListener',
+  config_options do
+    include_defaults false
+    include_default_listeners true
+    include_default_engine true
+    server_port 9005
+    listeners(
+      [
+        'org.mycompany.MyListener',
+        {
+          'class_name'  => 'org.mycompany.MyComplexListener',
+          'params'      => { 'SSLEngine' => 'on' }
+        },
+        ... additional listeners ...
+      ]
+    )
+    entities(
       {
-        'class_name'  => 'org.mycompany.MyComplexListener',
-        'params'      => { 'SSLEngine' => 'on' }
-      },
-      ... additional listeners ...
-    ],
-    entities: {
-      'connector-http-9080' => 'connector-http-9080.xml',
-      'engine-custom'       => 'engine-custom.xml',
-      ... additional entities ...
-    }
-  )
+        'connector-http-9080' => 'connector-http-9080.xml',
+        'engine-custom'       => 'engine-custom.xml',
+        ... additional entities ...
+      }
+    )
+  end 
+```
+
+## The above configuration yield the following server.xml:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE server-xml [
+  <!ENTITY connector-http-9080 SYSTEM "connector-http-9080.xml">
+  <!ENTITY engine-custom SYSTEM "engine-custom.xml">
+]>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance withs
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<Server port="9005" shutdown="SHUTDOWN" >
+    <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+    <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+    <Listener className="org.mycompany.MyListener" />
+    <Listener className="org.mycompany.MyComplexListener"
+              SSLEngine="on"
+              />
+
+    <Service name="Catalina">
+        &connector-http-9080;
+        &engine-custom;
+
+        <Engine name="Catalina" defaultHost="localhost">
+            <Realm className="org.apache.catalina.realm.LockOutRealm">
+                <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                       resourceName="UserDatabase"
+                       />
+            </Realm>
+
+            <Host name="localhost"
+                  appBase="webapps"
+                  unpackWARs="true"
+                  autoDeploy="true"
+                  />
+
+        </Engine>
+    </Service>
+</Server>
 ```
 
 # Testing
