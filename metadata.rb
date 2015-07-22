@@ -1,7 +1,7 @@
 name             'catalina'
 maintainer       'Drew A. Blessing'
 maintainer_email 'cookbooks@blessing.io'
-license          'all_rights'
+license          'Apache 2.0'
 description      'Installs/Configures tomcat'
 long_description 'Installs/Configures tomcat'
 version          '0.1.0'
