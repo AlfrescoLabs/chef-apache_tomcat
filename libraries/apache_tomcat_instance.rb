@@ -1,10 +1,10 @@
 require 'poise'
 
-module CatalinaInstance
+module ApacheTomcatInstance
   class Resource < Chef::Resource
     include Poise
 
-    provides :catalina_instance
+    provides :apache_tomcat_instance
     actions :create
 
     attribute :name, kind_of: String
@@ -26,7 +26,7 @@ module CatalinaInstance
   class Provider < Chef::Provider
     include Poise
 
-    provides :catalina_instance
+    provides :apache_tomcat_instance
 
     def action_create
       notifying_block do
@@ -75,7 +75,7 @@ module CatalinaInstance
       end
 
       def create_web_xml
-        catalina_config 'web' do
+        apache_tomcat_config 'web' do
           type :web
           instance new_resource.name
           config_options do
@@ -85,7 +85,7 @@ module CatalinaInstance
       end
 
       def create_server_xml
-        catalina_config 'server' do
+        apache_tomcat_config 'server' do
           type :server
           instance new_resource.name
           config_options do

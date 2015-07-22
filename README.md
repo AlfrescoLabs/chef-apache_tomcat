@@ -1,6 +1,6 @@
 # Description
 
-Manage installation and configuration of Apache Catalina Tomcat. Including
+Manage installation and configuration of Apache Tomcat. Includes
 support for multiple instances on a single server as well as flexible management
 of XML configuration files.
 
@@ -33,20 +33,20 @@ To edit this README:
 ## Install Apache Catalina Tomcat
 
 ```ruby
-catalina 'tomcat' do
+apache_tomcat 'tomcat' do
   url 'http://archive.apache.org/dist/tomcat/...'
   checksum 'sha256_checksum'
   version '8.0.24
 end
 
 # Default version is 8.0.24. To use defaults, simply define:
-catalina 'tomcat'
+apache_tomcat 'tomcat'
 ```
 
 ## Create an instance
 
 ```ruby
-catalina_instance 'instance1' do
+apache_tomcat_instance 'instance1' do
   setenv_variables config: [ 'export FOO=bar' ]
 end
 ```
@@ -55,9 +55,9 @@ end
 
 ```ruby
 # With defaults
-catalina_config 'web' do
+apache_tomcat_config 'web' do
   type :web
-  instance 'instance1' # Reference to `catalina_instance` resource.
+  instance 'instance1' # Reference to `apache_tomcat_instance` resource.
   config_options do
     include_default_servlets true
     include_default_session_config true
@@ -72,12 +72,12 @@ end
 # Without defaults
 
 ## First, disable default web.xml creation in the instance
-catalina_instance 'instance1' do
+apache_tomcat_instance 'instance1' do
   ...
   create_default_web_xml false
 end
 
-catalina_config 'web' do
+apache_tomcat_config 'web' do
   type :web
   instance 'instance1'
   config_options do
@@ -189,9 +189,9 @@ end
 
 ```ruby
 # With defaults
-catalina_config 'server' do
+apache_tomcat_config 'server' do
   type :server
-  instance 'instance1' # Reference to `catalina_instance` resource.
+  instance 'instance1' # Reference to `apache_tomcat_instance` resource.
   config_options do
     include_default_listeners true
     include_default_user_database true
@@ -207,12 +207,12 @@ end
 # With defaults
 
 ## First, disable default web.xml creation in the instance
-catalina_instance 'instance1` do
+apache_tomcat_instance 'instance1` do
   ...
   create_default_server_xml false
 end
 
-catalina_config 'server' do
+apache_tomcat_config 'server' do
   type :server
   instance 'instance1'
   config_options do
@@ -264,11 +264,11 @@ catalina_config 'server' do
   limitations under the License.
 -->
 <Server port="9005" shutdown="SHUTDOWN" >
-    <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
-    <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
-    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
-    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
-    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+    <Listener className="org.apache.apache_tomcat.startup.VersionLoggerListener" />
+    <Listener className="org.apache.apache_tomcat.core.AprLifecycleListener" SSLEngine="on" />
+    <Listener className="org.apache.apache_tomcat.core.JreMemoryLeakPreventionListener" />
+    <Listener className="org.apache.apache_tomcat.mbeans.GlobalResourcesLifecycleListener" />
+    <Listener className="org.apache.apache_tomcat.core.ThreadLocalLeakPreventionListener" />
     <Listener className="org.mycompany.MyListener" />
     <Listener className="org.mycompany.MyComplexListener"
               SSLEngine="on"
@@ -279,8 +279,8 @@ catalina_config 'server' do
         &engine-custom;
 
         <Engine name="Catalina" defaultHost="localhost">
-            <Realm className="org.apache.catalina.realm.LockOutRealm">
-                <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+            <Realm className="org.apache.apache_tomcat.realm.LockOutRealm">
+                <Realm className="org.apache.apache_tomcat.realm.UserDatabaseRealm"
                        resourceName="UserDatabase"
                        />
             </Realm>
@@ -357,7 +357,7 @@ Add the following alias in `~/.bash_profile`.
 
 # Recipes
 
-* catalina::default
+* apache_tomcat::default
 
 # License and Maintainer
 
