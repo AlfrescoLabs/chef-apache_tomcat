@@ -2,64 +2,72 @@ Manage installation and configuration of Apache Tomcat. Includes
 support for multiple instances on a single server as well as flexible management
 of XML configuration files.
 
+## Getting Started
+If you plan to fork the main cookbook repo please see [forking](#forking) below.
+
+1. Clone this cookbook.
+1. Make changes as necessary (be sure to write tests as you go)
+1. See [Testing](#testing) below for details on how to run the various tests locally.
+1. Commit and push
+1. Submit a pull request for review.
+
+## Generating Documentation
+DO NOT EDIT THIS README.md file directly. This file is generated using knife-cookbook-doc plugin.
+Install this plugin with `gem install knife-cookbook-doc`.
+Documentation is compiled from the following sources:
+
+1. Derived for attributes/recipes either by scanning the source code or by explicit declaration 
+in metadata.rb 
+1. Markdown files in the doc/ directory (overview is always the first to be compiled)
+
+To edit this README:
+
+1. Change relevant sections within the markdown files in the doc/ directory
+1. Edit metadata.rb or use inline annotated comments within the source code. 
+1. Generate new README using knife-cookbook-doc plugin and push changes to remote branch. 
+
 # Usage
 
 ## Install Apache Catalina Tomcat
 
-This cookbook takes the approach of splitting CATALINA_BASE and CATALINA_HOME.
-CATALINA_HOME is the 'shared' location and defaults to /usr/share/tomcat-<version>.
-CATALINA_BASE represents a particular instance of Tomcat where applications (WARs) 
-are deployed. There can be any number of instances per server. CATALINA_BASE
-consists of bin, conf, lib, logs, webapps, work and temp directories. Configuration
-like server.xml, web.xml go in conf and applications are deployed in webapps as you
-might expect.
-
 ```ruby
-apache_tomcat 'my_tomcat' do
+apache_tomcat 'tomcat' do
   url 'http://archive.apache.org/dist/tomcat/...'
-  # Note: Checksum is SHA-256, not MD5 or SHA1. Generate using `shasum -a 256 /path/to/tomcat.tar.gz`
   checksum 'sha256_checksum'
   version '8.0.24
 end
 
 # Default version is 8.0.24. To use defaults, simply define:
-apache_tomcat 'my_tomcat'
+apache_tomcat 'tomcat'
 ```
 
 ## Create an instance
 
-For a basic instance, define as seen below. Please note that this will create
-a default web.xml, server.xml and context.xml. This will likely meet most
-user's needs. However, if you need custom configuration for any of these files
-set the corresponding attribute to `false`.
-
 ```ruby
-apache_tomcat_instance 'instance1'
-
-# Non-default attributes
 apache_tomcat_instance 'instance1' do
-  setenv_options(config: ['export CATALINA_OPTS=foo'])
-  include_default_server_xml false
-  include_default_web_xml false
-  include_default_context_xml false
+  setenv_variables config: [ 'export FOO=bar' ]
 end
 ```
 
 ## Create Custom Web XML
 
-If `include_default_web_xml` is set to false on the instance resource you will
-need to define a config resource to build a custom web.xml file.
-
 ```ruby
-# Default attributes
-# Note: The definition below will result in an identical web.xml as when created
-# by the instance resource with `include_default_web_xml true`.
+# With defaults
 apache_tomcat_config 'web' do
   type :web
-  instance 'instance1' # Reference to `apache_tomcat_instance` resource. 
+  instance 'instance1' # Reference to `apache_tomcat_instance` resource.
+  config_options do
+    include_default_servlets true
+    include_default_session_config true
+    include_default_mime_types true
+    
+    # -- or --
+    
+    include_defaults true
+  end 
 end
 
-# Non-default attributes
+# Without defaults
 
 ## First, disable default web.xml creation in the instance
 apache_tomcat_instance 'instance1' do
@@ -178,12 +186,6 @@ end
 ## Create Custom Server XML
 
 ```ruby
-## First, disable default server.xml creation in the instance
-apache_tomcat_instance 'instance1' do
-  ...
-  create_default_server_xml false
-end
-
 # With defaults
 apache_tomcat_config 'server' do
   type :server
@@ -200,7 +202,7 @@ apache_tomcat_config 'server' do
   end 
 end
 
-# Non-default attributes
+# With defaults
 
 ## First, disable default web.xml creation in the instance
 apache_tomcat_instance 'instance1` do
