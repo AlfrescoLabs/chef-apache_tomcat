@@ -50,14 +50,14 @@ module ApacheTomcatInstance
       directory "#{new_resource.prefix_root}" do
         owner new_resource.user
         group new_resource.group
-        mode '0755'
+        mode '0750'
       end
 
       # Main instance directory
       directory instance_dir do
         owner new_resource.user
         group new_resource.group
-        mode '0755'
+        mode '0750'
       end
 
       # Sub-directories
@@ -65,7 +65,7 @@ module ApacheTomcatInstance
         directory "#{instance_dir}/#{dir}" do
           owner new_resource.user
           group new_resource.group
-          mode '0755'
+          mode '0750'
         end
       end
 

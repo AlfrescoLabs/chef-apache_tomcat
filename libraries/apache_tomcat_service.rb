@@ -29,11 +29,17 @@ module ApacheTomcatService
       notifying_block do
         include_recipe 'runit'
 
-        directory "#{new_resource.log_dir}/#{new_resource.instance}" do
+        directory new_resource.log_dir do
           recursive true
           owner new_resource.user
           group new_resource.group
-          mode '0640'
+          mode '0770'
+        end
+
+        directory "#{new_resource.log_dir}/#{new_resource.instance}" do
+          owner new_resource.user
+          group new_resource.group
+          mode '0770'
         end
 
         runit_service "tomcat-#{new_resource.instance}" do
