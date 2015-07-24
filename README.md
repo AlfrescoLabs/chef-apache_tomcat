@@ -4,6 +4,9 @@ Manage installation and configuration of Apache Tomcat. Includes
 support for multiple instances on a single server as well as flexible management
 of XML configuration files.
 
+* Note: This is a work in progress. Documentation and features/stability will
+improve before 1.0. Initial release is for testing purposes only.
+
 # Usage
 
 ## Install Apache Catalina Tomcat
@@ -348,6 +351,7 @@ Add the following alias in `~/.bash_profile`.
 * poise (~> 2.0)
 * ark (~> 0.9)
 * java (~> 1.31)
+* runit (~> 1.7)
 
 # Attributes
 
