@@ -12,3 +12,8 @@ apache_tomcat_config 'web' do
   type :web
   instance 'instance1'
 end
+
+apache_tomcat_config 'server' do
+  type :server
+  instance 'instance1'
+end

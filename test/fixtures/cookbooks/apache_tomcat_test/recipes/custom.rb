@@ -39,7 +39,7 @@ apache_tomcat_config 'web' do
         {
           'name'            => 'my_servlet2',
           'url_pattern'     =>  ['*.jsp', '*.jspx']
-        },
+        }
       ]
     )
     filters(
@@ -69,10 +69,36 @@ apache_tomcat_config 'web' do
           'name' => 'my_filter2',
           'url_pattern' => ['/pages/*', '/admin/*'],
           'dispatcher' => 'REQUEST'
-        },
+        }
       ]
     )
     session_timeout 15
-    welcome_file_list ['foobar.html','foobar.jsp']
+    welcome_file_list ['foobar.html', 'foobar.jsp']
+  end
+end
+
+apache_tomcat_config 'server' do
+  type :server
+  instance 'instance1'
+  config_options do
+    include_defaults false
+    include_default_listeners true
+    include_default_engine true
+    server_port 9005
+    listeners(
+      [
+        'org.mycompany.MyListener',
+        {
+          'class_name'  => 'org.mycompany.MyComplexListener',
+          'params'      => { 'SSLEngine' => 'on' }
+        }
+      ]
+    )
+    entities(
+      [
+        #{ 'connector-http-9080' => 'connector-http-9080.xml' },
+        'engine-custom'
+      ]
+    )
   end
 end
