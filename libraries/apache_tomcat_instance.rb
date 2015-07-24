@@ -21,6 +21,9 @@ module ApacheTomcatInstance
     attribute :create_default_server_xml,
               kind_of: [TrueClass, FalseClass],
               default: true
+    attribute :create_default_context_xml,
+              kind_of: [TrueClass, FalseClass],
+              default: true
   end
 
   class Provider < Chef::Provider
@@ -34,6 +37,7 @@ module ApacheTomcatInstance
         create_setenv_file if new_resource.setenv_options
         create_web_xml if new_resource.create_default_web_xml
         create_server_xml  if new_resource.create_default_server_xml
+        create_context_xml  if new_resource.create_default_context_xml
       end
     end
 
@@ -74,22 +78,16 @@ module ApacheTomcatInstance
         end
       end
 
-      def create_web_xml
-        apache_tomcat_config 'web' do
-          type :web
-          instance new_resource.name
-          config_options do
-            include_defaults true
-          end
-        end
-      end
-
-      def create_server_xml
-        apache_tomcat_config 'server' do
-          type :server
-          instance new_resource.name
-          config_options do
-            include_defaults true
+      self.class.class_eval do
+        %w(web server context).each do |type|
+          define_method "create_#{type}_xml" do
+            apache_tomcat_config type do
+              type type.to_sym
+              instance new_resource.name
+              config_options do
+                include_defaults true
+              end
+            end
           end
         end
       end

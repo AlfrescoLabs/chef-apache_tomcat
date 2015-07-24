@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec chpst -u <%= @options[:user] %> svlogd -tt /var/log/tomcat/<%= @options[:name] %>

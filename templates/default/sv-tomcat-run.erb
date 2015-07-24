@@ -1,0 +1,8 @@
+#!/bin/bash
+exec 2>&1
+
+export CATALINA_HOME=<%= @options[:catalina_home] %>
+export CATALINA_BASE=<%= @options[:catalina_base] %>
+export JAVA_HOME=<%= @options[:java_home] %>
+
+exec chpst -u <%= @options[:user] %> $CATALINA_HOME/bin/catalina.sh run
