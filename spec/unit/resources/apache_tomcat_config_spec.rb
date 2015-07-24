@@ -11,29 +11,48 @@ describe 'apache_tomcat_test' do
     recipe 'apache_tomcat_test::default'
     step_into :apache_tomcat_config
 
-    [
-      '<servlet-name>default</servlet-name>',
-      '<session-timeout>30</session-timeout>',
-      '<welcome-file>index.html</welcome-file>',
-      '<extension>123</extension>'
-    ].each do |content|
-      it do
-        is_expected.to(
-          render_file('/opt/tomcat/instance1/conf/web.xml')
-            .with_content(content)
-        )
+    context 'in web.xml' do
+      [
+        '<servlet-name>default</servlet-name>',
+        '<session-timeout>30</session-timeout>',
+        '<welcome-file>index.html</welcome-file>',
+        '<extension>123</extension>'
+      ].each do |content|
+        it do
+          is_expected.to(
+            render_file('/opt/tomcat/instance1/conf/web.xml')
+              .with_content(content)
+          )
+        end
+      end
+
+      [
+        '<filter>',
+        '<filter-mapping>'
+      ].each do |content|
+        it do
+          is_expected.not_to(
+            render_file('/opt/tomcat/instance1/conf/web.xml')
+              .with_content(content)
+          )
+        end
       end
     end
 
-    [
-     '<filter>',
-     '<filter-mapping>'
-    ].each do |content|
-      it do
-        is_expected.not_to(
-          render_file('/opt/tomcat/instance1/conf/web.xml')
-            .with_content(content)
-        )
+    context 'in server.xml' do
+      [
+        '<Server port="8005" shutdown="SHUTDOWN" >',
+        '<Listener className="org.apache.catalina.startup.VersionLoggerListener" />',
+        '<Resource name="UserDatabase"',
+        '<Connector port="8080"',
+        '<Engine name="Catalina" defaultHost="localhost">'
+      ].each do |content|
+        it do
+          is_expected.to(
+            render_file('/opt/tomcat/instance1/conf/server.xml')
+              .with_content(content)
+          )
+        end
       end
     end
   end
@@ -42,6 +61,7 @@ describe 'apache_tomcat_test' do
     recipe 'apache_tomcat_test::custom'
     step_into :apache_tomcat_config
 
+    context 'in web.xml' do
       it do
         is_expected.to(
           render_file('/opt/tomcat/instance1/conf/web.xml')
@@ -73,9 +93,10 @@ describe 'apache_tomcat_test' do
         <load-on-startup>2</load-on-startup>
     </servlet>
 eos
-)
-        )
+            )
+          )
       end
+
       it do
         is_expected.to(
           render_file('/opt/tomcat/instance1/conf/web.xml')
@@ -90,13 +111,14 @@ eos
         <url-pattern>*.jspx</url-pattern>
     </servlet-mapping>
 eos
-)
+          )
         )
       end
-    it do
-      is_expected.to(
-        render_file('/opt/tomcat/instance1/conf/web.xml')
-          .with_content(<<eos
+
+      it do
+        is_expected.to(
+          render_file('/opt/tomcat/instance1/conf/web.xml')
+            .with_content(<<eos
     <filter>
         <filter-name>my_filter1</filter-name>
         <filter-class>org.mycompany.MyFilter1</filter-class>
@@ -122,13 +144,14 @@ eos
         </init-param>
     </filter>
 eos
-)
-      )
-    end
-    it do
-      is_expected.to(
-        render_file('/opt/tomcat/instance1/conf/web.xml')
-          .with_content(<<eos
+          )
+        )
+      end
+
+      it do
+        is_expected.to(
+          render_file('/opt/tomcat/instance1/conf/web.xml')
+            .with_content(<<eos
     <filter-mapping>
         <filter-name>my_filter1</filter-name>
         <url-pattern>/*</url-pattern>
@@ -141,31 +164,64 @@ eos
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 eos
-)
-      )
-    end
-    it do
-      is_expected.to(
-        render_file('/opt/tomcat/instance1/conf/web.xml')
-          .with_content(<<eos
+          )
+        )
+      end
+
+      it do
+        is_expected.to(
+          render_file('/opt/tomcat/instance1/conf/web.xml')
+            .with_content(<<eos
     <session-config>
         <session-timeout>15</session-timeout>
     </session-config>
 eos
+          )
         )
-      )
-    end
-    it do
-      is_expected.to(
-        render_file('/opt/tomcat/instance1/conf/web.xml')
-          .with_content(<<eos
+      end
+
+      it do
+        is_expected.to(
+          render_file('/opt/tomcat/instance1/conf/web.xml')
+            .with_content(<<eos
     <welcome-file-list>
         <welcome-file>foobar.html</welcome-file>
         <welcome-file>foobar.jsp</welcome-file>
     </welcome-file-list>
 eos
+          )
         )
-      )
+      end
+    end
+
+    context 'in server.xml' do
+      [
+        '<Server port="9005" shutdown="SHUTDOWN" >',
+        '<Listener className="org.apache.catalina.startup.VersionLoggerListener" />',
+        '<Engine name="Catalina" defaultHost="localhost">',
+        '<!ENTITY engine-custom SYSTEM "engine-custom.xml">',
+        '<Listener className="org.mycompany.MyListener" />',
+        '&engine-custom;'
+      ].each do |content|
+        it do
+          is_expected.to(
+            render_file('/opt/tomcat/instance1/conf/server.xml')
+              .with_content(content)
+          )
+        end
+      end
+
+      it do
+        is_expected.to(
+          render_file('/opt/tomcat/instance1/conf/server.xml')
+            .with_content(<<eos
+    <Listener className="org.mycompany.MyComplexListener"
+              SSLEngine="on"
+              />
+eos
+          )
+        )
+      end
+     end
     end
   end
-end
