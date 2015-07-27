@@ -229,13 +229,7 @@ apache_tomcat_config 'server' do
         ... additional listeners ...
       ]
     )
-    entities(
-      {
-        'connector-http-9080' => 'connector-http-9080.xml',
-        'engine-custom'       => 'engine-custom.xml',
-        ... additional entities ...
-      }
-    )
+    entities [ 'connector-http-9080', 'engine-custom' ]
   end 
 ```
 
