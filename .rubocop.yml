@@ -1,3 +1,7 @@
+AllCops:
+  Exclude:
+    - 'Guardfile'
+
 SingleSpaceBeforeFirstArg:
   Exclude:
     - "**/metadata.rb"
@@ -10,3 +14,18 @@ Metrics/LineLength:
 LeadingCommentSpace:
   Enabled: false
 
+Documentation:
+  Enabled: false
+
+# This is a really lame cop - especially when the methods contain Chef resources
+# that are lengthy.
+Metrics/AbcSize:
+  Max: 47
+
+# Also lame...
+Metrics/MethodLength:
+  Max: 30
+
+# Cop has no sense of style
+Style/ClosingParenthesisIndentation:
+  Enabled: false

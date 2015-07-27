@@ -94,7 +94,7 @@ describe 'apache_tomcat_test' do
     </servlet>
 eos
             )
-          )
+        )
       end
 
       it do
@@ -111,7 +111,7 @@ eos
         <url-pattern>*.jspx</url-pattern>
     </servlet-mapping>
 eos
-          )
+            )
         )
       end
 
@@ -144,7 +144,7 @@ eos
         </init-param>
     </filter>
 eos
-          )
+            )
         )
       end
 
@@ -164,7 +164,7 @@ eos
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 eos
-          )
+            )
         )
       end
 
@@ -176,7 +176,7 @@ eos
         <session-timeout>15</session-timeout>
     </session-config>
 eos
-          )
+            )
         )
       end
 
@@ -189,7 +189,7 @@ eos
         <welcome-file>foobar.jsp</welcome-file>
     </welcome-file-list>
 eos
-          )
+            )
         )
       end
     end
@@ -219,9 +219,9 @@ eos
               SSLEngine="on"
               />
 eos
-          )
+            )
         )
       end
-     end
     end
   end
+end

@@ -23,11 +23,11 @@ module ApacheTomcatConfig
 
     def default_source_check
       if type == :entity && ((!config_source && !config_cookbook) || !config_content)
-        raise Chef::Exceptions::ValidationFailed,
-              'when config \'type\' is \':entity\', \'config_content\' or '\
-              '\'config_source\' and \'config_cookbook\' must be specified'
+        fail Chef::Exceptions::ValidationFailed,
+             'when config \'type\' is \':entity\', \'config_content\' or '\
+             '\'config_source\' and \'config_cookbook\' must be specified'
       end
-      "#{type.to_s}.xml.erb"
+      "#{type}.xml.erb"
     end
   end
 
@@ -41,8 +41,8 @@ module ApacheTomcatConfig
       case new_resource.type
       when :server, :web, :context
         if new_resource.name != new_resource.type.to_s
-          Chef::Log.warn("Name should be the same as type when type is :context, :web, or :server")
-          Chef::Log.warn("Duplicate resources could exist otherwise.")
+          Chef::Log.warn('Name should be the same as type when type is :context, :web, or :server')
+          Chef::Log.warn('Duplicate resources could exist otherwise.')
         end
         filename = new_resource.type.to_s
       when :entity
