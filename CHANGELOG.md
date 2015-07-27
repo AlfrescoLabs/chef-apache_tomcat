@@ -1,6 +1,6 @@
 # Changelog
 
-Next Release
+0.2.0
 ---------
 - Add LICENSE and license headers. Fixes #1
 - Add ChefSpec matchers. Fixes #3
