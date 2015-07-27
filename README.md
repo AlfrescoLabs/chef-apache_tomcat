@@ -93,7 +93,7 @@ apache_tomcat_config 'web' do
       [
         {
           'name'            => 'my_servlet',
-          'url-pattern'     => '/', # or an array: ['*.jsp', '*.jspx']
+          'url_pattern'     => '/', # or an array: ['*.jsp', '*.jspx']
         },
         # ... additional servlet mappings ...
       ]
