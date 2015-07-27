@@ -61,6 +61,7 @@ module ApacheTomcatService
           group new_resource.group
           run_template_name 'tomcat'
           log_template_name 'tomcat'
+          cookbook 'apache_tomcat'
           options(
             name: new_resource.instance,
             catalina_home: new_resource.catalina_home,
