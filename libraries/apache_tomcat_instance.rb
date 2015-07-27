@@ -79,7 +79,7 @@ module ApacheTomcatInstance
       end
     end
 
-    self.class.class_eval do
+    class_eval do
       %w(web server context).each do |type|
         define_method "create_#{type}_xml" do
           apache_tomcat_config type do
