@@ -1,5 +1,9 @@
 # Changelog
 
+0.2.1
+---------
+- Fix bug in server.xml with UserDatabase realm
+
 0.2.0
 ---------
 - Add LICENSE and license headers. Fixes #1

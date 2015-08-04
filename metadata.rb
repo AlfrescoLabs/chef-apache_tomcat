@@ -4,7 +4,7 @@ maintainer_email 'cookbooks@blessing.io'
 license          'Apache 2.0'
 description      'Installs/Configures tomcat'
 long_description 'Installs/Configures tomcat'
-version          '0.2.0'
+version          '0.2.1'
 
 depends 'poise', '~> 2.0'
 depends 'ark', '~> 0.9'

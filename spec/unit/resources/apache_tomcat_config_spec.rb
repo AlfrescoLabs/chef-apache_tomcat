@@ -57,7 +57,8 @@ describe 'apache_tomcat_test' do
         '<Listener className="org.apache.catalina.startup.VersionLoggerListener" />',
         '<Resource name="UserDatabase"',
         '<Connector port="8080"',
-        '<Engine name="Catalina" defaultHost="localhost">'
+        '<Engine name="Catalina" defaultHost="localhost">',
+        '<Realm className="org.apache.catalina.realm.LockOutRealm">'
       ].each do |content|
         it do
           is_expected.to(
@@ -233,6 +234,11 @@ eos
 eos
             )
         )
+      end
+
+      it do
+        is_expected.not_to render_file('/opt/tomcat/instance1/conf/server.xml')
+          .with_content('<Realm className="org.apache.catalina.realm.LockOutRealm">')
       end
     end
   end
