@@ -25,6 +25,9 @@ module ApacheTomcatInstance
     attribute :prefix_root, kind_of: String, default: '/opt/tomcat'
     attribute :user, kind_of: String, default: 'tomcat'
     attribute :group, kind_of: String, default: 'tomcat'
+    attribute :catalina_home,
+              kind_of: String,
+              default: '/usr/share/tomcat'
     attribute :setenv,
               option_collector: true,
               template: true,
@@ -38,6 +41,12 @@ module ApacheTomcatInstance
     attribute :create_default_context_xml,
               kind_of: [TrueClass, FalseClass],
               default: true
+    attribute :bundle_webapps_enabled,
+              kind_of: Array,
+              default: []
+    attribute :bundle_webapps_managed,
+              kind_of: Array,
+              default: []
   end
 
   class Provider < Chef::Provider
@@ -50,9 +59,10 @@ module ApacheTomcatInstance
         create_instance_directories
         create_setenv_file if new_resource.setenv_options
         create_web_xml if new_resource.create_default_web_xml
-        create_server_xml  if new_resource.create_default_server_xml
-        create_context_xml  if new_resource.create_default_context_xml
+        create_server_xml if new_resource.create_default_server_xml
+        create_context_xml if new_resource.create_default_context_xml
       end
+      new_resource.bundle_webapps_enabled ? deploy_bundle_wars : undeploy_managed_bundle_wars
     end
 
     def instance_dir
@@ -90,6 +100,28 @@ module ApacheTomcatInstance
         owner new_resource.user
         group new_resource.group
         mode '0750'
+      end
+    end
+
+    def deploy_bundle_wars
+      new_resource.bundle_webapps_enabled.each do |webapp|
+        file "#{instance_dir}/webapps/#{webapp}.war" do
+          content IO.read("#{new_resource.catalina_home}/bundle_wars/#{webapp}.war")
+          mode '0644'
+          owner new_resource.user
+          group new_resource.group
+          action :create
+        end
+      end
+      undeploy_managed_bundle_wars
+    end
+
+    def undeploy_managed_bundle_wars
+      %w(ROOT docs examples host-manager manager).each do |webapp|
+        next if new_resource.bundle_webapps_enabled.include? webapp
+        file "#{instance_dir}/webapps/#{webapp}.war" do
+          action :delete
+        end if new_resource.bundle_webapps_managed.include? webapp
       end
     end
 

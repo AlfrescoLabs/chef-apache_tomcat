@@ -43,6 +43,7 @@ module ApacheTomcat
       notifying_block do
         create_user
         install_archive
+        preserve_bundle_wars
         remove_unnecessary_files
       end
     end
@@ -73,11 +74,39 @@ module ApacheTomcat
       end
     end
 
+    def preserve_bundle_wars
+      # Create bundle_wars directory in CATALINA_HOME
+      Chef::Log.debug("Create directory for tomcat bundle wars in #{home_dir}")
+      bundle_war_dir = "#{home_dir}/bundle_wars"
+      directory bundle_war_dir do
+        owner new_resource.user
+        group new_resource.group
+        mode '0755'
+        recursive true
+        action :create
+      end
+      # War up default webapps and send to bundle_wars directory in CATALINA_HOME
+      Chef::Log.debug("Preserve default tomcat bundle wars in #{home_dir}/webapps")
+      dirs = %w(ROOT docs examples host-manager manager)
+      dirs.each do |webapp|
+        Chef::Log.debug("Preserving #{webapp}.war to #{bundle_war_dir}")
+        execute "Preserve #{webapp}.war" do
+          command "/usr/bin/jar cf #{bundle_war_dir}/#{webapp}.war -C #{home_dir}/webapps #{webapp}"
+          only_if { ::Dir.exist?("#{home_dir}/webapps/#{webapp}") }
+        end
+      end
+    end
+
     def remove_unnecessary_files
       Chef::Log.debug("Removing unecessary base directories from #{home_dir}")
       dirs = %w(temp webapps work logs)
-      dirs_to_delete = dirs.map { |dir| "#{home_dir}/#{dir}" }
-      shell_out!("/bin/rm -rf #{dirs_to_delete.join(' ')}")
+      dirs.each do |dir|
+        Chef::Log.debug("Ensure unnecessary directory #{dir} is removed")
+        directory "#{home_dir}/#{dir}" do
+          recursive true
+          action :delete
+        end
+      end
     end
 
     def home_dir
