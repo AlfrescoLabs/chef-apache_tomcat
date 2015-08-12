@@ -58,7 +58,7 @@ apache_tomcat_config 'web' do
         {
           'name'            => 'my_servlet',
           'class'           => 'org.mycompany.MyServlet',
-          'init_params'      => { 'debug' => '1', 'listings' => true },
+          'init_params'     => { 'debug' => '1', 'listings' => true },
           'load_on_startup' => '1'
         }
       ]

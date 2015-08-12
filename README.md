@@ -291,6 +291,37 @@ apache_tomcat_config 'server' do
 </Server>
 ```
 
+## Deploying Tomcat Default Bundle Webapps
+
+Tomcat comes with a bundle of default webapps.  These webapps are preserved as
+war files in CATALINA_HOME/bundle_wars.  To install these webapps to a tomcat
+instance set the `bundle_webapps_enabled` array with the webapps to install.  To
+ensure that a webapp is removed after it is removed from `bundle_webapps_enabled`,
+add it to the `bundle_webapps_managed` array passed to the instance.  The following
+code example will remove `host-manager` and `manager` webapps if they are not included
+in the `bundle_webapps_enabled` array, where as the `ROOT` and `docs` webapps will remain installed
+if they are not included in the `bundle_webapps_enabled` array.  `ROOT` and `docs` would
+have to be removed manually.  If you have a custom webapp that has the same name as
+any of the bundle webapps, you will need to make sure that webapp is not included in
+`bundle_webapps_enabled` and `bundle_webapps_managed array`, otherwise it may be removed
+or overriden by the default bundle webapp.
+
+Tomcat default bundle webapps available for installation: `ROOT, docs, examples, host-manager, manager`
+
+```ruby
+apache_tomcat_instance 'instance1'
+
+# Non-default attributes
+apache_tomcat_instance 'instance1' do
+  setenv_options(config: ['export CATALINA_OPTS=foo'])
+  include_default_server_xml false
+  include_default_web_xml false
+  include_default_context_xml false
+  bundle_webapps_enabled ['ROOT', 'docs', 'host-manager', 'manager']
+  bundle_webapps_managed ['host-manager', 'manager']
+end
+```
+
 # Testing
 
 ## Code Style
