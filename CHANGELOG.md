@@ -1,5 +1,9 @@
 # Changelog
 
+0.3.0
+---------
+- Default Tomcat webapp bundle management. Thanks to @klangrud
+
 0.2.1
 ---------
 - Fix bug in server.xml with UserDatabase realm
