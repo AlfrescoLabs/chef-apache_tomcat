@@ -1,5 +1,9 @@
 # Changelog
 
+0.3.1
+---------
+- Fixed default manifest creation issue with tomcat bundle wars
+
 0.3.0
 ---------
 - Default Tomcat webapp bundle management. Thanks to @klangrud
