@@ -1,5 +1,9 @@
 # Changelog
 
+0.3.2
+---------
+- Fixed issue with tomcat bundle wars exploding into nested dir
+
 0.3.1
 ---------
 - Fixed default manifest creation issue with tomcat bundle wars
