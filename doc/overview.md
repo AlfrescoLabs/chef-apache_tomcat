@@ -16,6 +16,10 @@ To continue using runit as the service manager, add 'poise-service-runit' and
 a dependency in your wrapper cookbook. This will install and set the runit service
 plugin as the default. That's *all* you have to do.
 
+This also has the side-effect of adding proper service-type actions on the 
+`apache_tomcat_service` resource. You can now notify the resource for `:restart`,
+`:reload`, `:start`, `:stop`, `:enable`, etc.
+
 One final note, when using the poise-service-runit cookbook the log location is 
 different than previous versions of this cookbook. Instead of `/var/log/tomcat/<instance>`
 logs are now in `/var/log/tomcat-<instance>`. A minor change, but one that makes
