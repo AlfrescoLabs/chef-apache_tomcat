@@ -5,6 +5,25 @@ of XML configuration files.
 * Note: This is a work in progress. Documentation and features/stability will
 improve before 1.0. Initial release is for testing purposes only.
 
+## Version 0.4.0 brings breaking changes.
+
+Runit was previously the service manager used with this cookbook. This version
+switches to using poise_service, a pluggable service resource. See
+[poise-service](https://github.com/poise/poise-service).
+
+To continue using runit as the service manager, add 'poise-service-runit' and 
+'runit' (= 1.6; runit 1.7 is currently not compatible with poise-service-runit) as
+a dependency in your wrapper cookbook. This will install and set the runit service
+plugin as the default. That's *all* you have to do.
+
+One final note, when using the poise-service-runit cookbook the log location is 
+different than previous versions of this cookbook. Instead of `/var/log/tomcat/<instance>`
+logs are now in `/var/log/tomcat-<instance>`. A minor change, but one that makes
+sense in my opinion.
+
+If you encounter any other breaking changes not outlined here, please file an
+issue. After version 1.0.0 this would have warranted a 2.0.0 (major version) bump.
+
 # Usage
 
 ## Install Apache Catalina Tomcat

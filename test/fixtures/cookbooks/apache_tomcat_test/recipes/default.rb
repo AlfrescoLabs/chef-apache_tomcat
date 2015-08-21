@@ -29,3 +29,5 @@ apache_tomcat_config 'server' do
   type :server
   instance 'instance1'
 end
+
+apache_tomcat_service 'instance1'

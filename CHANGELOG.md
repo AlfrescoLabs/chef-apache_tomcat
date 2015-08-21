@@ -1,5 +1,10 @@
 # Changelog
 
+0.4.0
+---------
+- Modify service to use poise_service. Fixes #7
+  NOTE: This is technically a breaking change. See README.md for more information. 
+
 0.3.2
 ---------
 - Fixed issue with tomcat bundle wars exploding into nested dir
