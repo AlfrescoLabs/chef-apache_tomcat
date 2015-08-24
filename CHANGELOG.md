@@ -1,5 +1,9 @@
 # Changelog
 
+0.4.1
+---------
+- Added proper matchers for apache_tomcat_service
+
 0.4.0
 ---------
 - Modify service to use poise_service. Fixes #7
