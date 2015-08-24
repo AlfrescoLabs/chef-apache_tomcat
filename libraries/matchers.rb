@@ -34,7 +34,23 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:apache_tomcat_instance, :create, resource_name)
   end
 
-  def create_apache_tomcat_service(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:apache_tomcat_service, :create, resource_name)
+  def enable_apache_tomcat_service(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:apache_tomcat_service, :enable, resource_name)
+  end
+
+  def disable_apache_tomcat_service(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:apache_tomcat_service, :disable, resource_name)
+  end
+
+  def start_apache_tomcat_service(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:apache_tomcat_service, :start, resource_name)
+  end
+
+  def stop_apache_tomcat_service(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:apache_tomcat_service, :stop, resource_name)
+  end
+
+  def restart_apache_tomcat_service(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:apache_tomcat_service, :restart, resource_name)
   end
 end
