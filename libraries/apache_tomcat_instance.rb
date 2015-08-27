@@ -118,7 +118,9 @@ module ApacheTomcatInstance
 
     def config_resource_exist?(type)
       resources = run_context.resource_collection.select do |r|
-        r.resource_name == :apache_tomcat_config && r.type == type && r.instance == new_resource.name
+        r.resource_name == :apache_tomcat_config &&
+          r.type == type &&
+          r.instance == new_resource.name
       end
 
       if resources.length == 1
