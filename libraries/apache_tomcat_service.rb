@@ -22,13 +22,13 @@ module ApacheTomcatService
 
     attribute :instance, kind_of: String, name_attribute: true
     attribute :java_home, kind_of: String, default: '/usr'
-    attribute :catalina_home,
-              kind_of: String,
-              default: '/usr/share/tomcat'
-    attribute :catalina_base,
-              kind_of: String,
-              default: lazy { "/opt/tomcat/#{instance}" }
-    attribute :user, kind_of: String, default: 'tomcat'
+    # attribute :catalina_home,
+    #           kind_of: String,
+    #           default: '/usr/share/tomcat'
+    # attribute :catalina_base,
+    #           kind_of: String,
+    #           default: lazy { "/opt/tomcat/#{instance}" }
+    # attribute :user, kind_of: String, default: 'tomcat'
     attribute :restart_on_update, kind_of: [TrueClass, FalseClass], default: true
 
     def service_name
@@ -45,15 +45,34 @@ module ApacheTomcatService
 
     provides :apache_tomcat_service
 
+    def instance
+      resources = run_context.resource_collection.select do |r|
+        r.resource_name == :apache_tomcat_instance &&
+          r.name ==  new_resource.instance
+      end
+
+      if resources.length > 0
+        Chef::Log.debug(
+          "#{log_prefix}: Using attributes from apache_tomcat_instance[#{new_resource.instance}]"
+        )
+        @instance_resource = resources.first
+      else
+        fail(
+          NotFoundError,
+          "#{log_prefix}: Could not find apache_tomcat_instance[#{new_resource.instance}]"
+        )
+      end
+    end
+
     def service_options(service)
       service.command(new_resource.command)
-      service.directory(new_resource.catalina_home)
+      service.directory(instance.catalina_home)
       service.environment(
-        CATALINA_HOME: new_resource.catalina_home,
-        CATALINA_BASE: new_resource.catalina_base,
+        CATALINA_HOME: instance.catalina_home,
+        CATALINA_BASE: "#{instance.prefix_root}/#{instance.name}",
         JAVA_HOME: new_resource.java_home
       )
-      service.user(new_resource.user)
+      service.user(instance.user)
       service.restart_on_update(new_resource.restart_on_update)
     end
   end
