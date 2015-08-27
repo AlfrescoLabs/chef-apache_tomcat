@@ -8,7 +8,7 @@ DEPENDENCIES
 GRAPH
   7-zip (1.0.2)
     windows (>= 1.2.2)
-  apache_tomcat (0.4.0)
+  apache_tomcat (0.4.1)
     ark (~> 0.9)
     java (~> 1.31)
     poise-service (~> 1.0)

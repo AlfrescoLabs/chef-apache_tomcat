@@ -26,9 +26,6 @@ module ApacheTomcatConfig
               equal_to: [:server, :web, :context, :entity],
               required: true
     attribute :instance, kind_of: String, required: true
-    attribute :prefix_root, kind_of: String, default: '/opt/tomcat'
-    attribute :user, kind_of: String, default: 'tomcat'
-    attribute :group, kind_of: String, default: 'tomcat'
     attribute :config,
               option_collector: true,
               template: true,
@@ -60,8 +57,8 @@ module ApacheTomcatConfig
       end
       notifying_block do
         file "#{instance_config_dir}/#{filename}.xml" do
-          owner new_resource.user
-          group new_resource.group
+          owner instance.user
+          group instance.group
           mode '0640'
           content new_resource.config_content
         end
@@ -69,7 +66,30 @@ module ApacheTomcatConfig
     end
 
     def instance_config_dir
-      "#{new_resource.prefix_root}/#{new_resource.instance}/conf"
+      "#{instance.prefix_root}/#{instance.name}/conf"
+    end
+
+    def instance
+      resources = run_context.resource_collection.select do |r|
+        r.resource_name == :apache_tomcat_instance &&
+          r.name == new_resource.instance
+      end
+
+      if resources.length > 0
+        Chef::Log.debug(
+          "#{log_prefix}: Using attributes from apache_tomcat_instance[#{new_resource.instance}]"
+        )
+        @instance_resource = resources.first
+      else
+        raise(
+          NotFoundError,
+          "#{log_prefix}: Could not find apache_tomcat_instance[#{new_resource.instance}]"
+        )
+      end
+    end
+
+    def log_prefix
+      "apache_tomcat_config[#{new_resource.name}]"
     end
   end
 end
