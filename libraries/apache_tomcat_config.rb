@@ -75,6 +75,15 @@ module ApacheTomcatConfig
           r.name == new_resource.instance
       end
 
+      # If apache_tomcat_config is defined in a sub-context it won't find
+      # top-level resources without looking in global collection
+      if resources.length == 0
+        resources = global_resource_collection.select do |r|
+          r.resource_name == :apache_tomcat_instance &&
+            r.name == new_resource.instance
+        end
+      end
+
       if resources.length > 0
         Chef::Log.debug(
           "#{log_prefix}: Using attributes from apache_tomcat_instance[#{new_resource.instance}]"
@@ -82,7 +91,6 @@ module ApacheTomcatConfig
         @instance_resource = resources.first
       else
         fail(
-          NotFoundError,
           "#{log_prefix}: Could not find apache_tomcat_instance[#{new_resource.instance}]"
         )
       end

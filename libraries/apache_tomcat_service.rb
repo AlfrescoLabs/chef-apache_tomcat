@@ -58,10 +58,13 @@ module ApacheTomcatService
         @instance_resource = resources.first
       else
         fail(
-          NotFoundError,
           "#{log_prefix}: Could not find apache_tomcat_instance[#{new_resource.instance}]"
         )
       end
+    end
+
+    def log_prefix
+      "apache_tomcat_service[#{new_resource.name}]"
     end
 
     def service_options(service)
