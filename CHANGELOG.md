@@ -1,5 +1,11 @@
 # Changelog
 
+0.5.0
+---------
+- Add auto-detection of related configuration resources. See README.md for
+  more details. NOTE: This is a breaking change because some attributes were 
+  removed.
+
 0.4.1
 ---------
 - Added proper matchers for apache_tomcat_service

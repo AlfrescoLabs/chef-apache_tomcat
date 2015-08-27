@@ -7,7 +7,48 @@ of XML configuration files.
 * Note: This is a work in progress. Documentation and features/stability will
 improve before 1.0. Initial release is for testing purposes only.
 
-## Version 0.4.0 brings breaking changes.
+## Breaking changes
+
+New users should skip this section. Breaking changes won't affect new users.
+
+### 0.5.0
+
+Resources now auto-detect related resources. This greatly simplifies configuration.
+
+For example, previously there were attributes on apache_tomcat_instance to
+create default web, server and context XML files. If you wanted to create custom
+XML files for any of those you would have to manually set the `create_default_<type>_xml`
+attribute to false on apache_tomcat_instance first. Now, simply create the
+custom config resource and the instance will know it should not create the default.
+
+Example 1 (apache_tomcat_instance will create default web, server and context XML):
+
+```
+apache_tomcat 'tomcat'
+
+apache_tomcat_instance 'instance1'
+
+# no other apache_tomcat_config resources are defined
+```
+
+Example 2
+
+(apache_tomcat_instance will *not* create a default web.xml because it recognizes
+the apache_tomcat_config resource with type :web and instance name. It will
+still create default server and context XML)
+
+```
+apache_tomcat 'tomcat'
+
+apache_tomcat_instance 'instance1'
+
+apache_tomcat_config 'web' do
+  type :web
+  instance 'instance1'
+end
+```
+
+### 0.4.0
 
 Runit was previously the service manager used with this cookbook. This version
 switches to using poise_service, a pluggable service resource. See
