@@ -56,6 +56,7 @@ module ApacheTomcatInstance
 
     def action_create
       notifying_block do
+        config_resource_exist?(:web)
         create_instance_directories
         create_setenv_file if new_resource.setenv_options
         create_web_xml if new_resource.create_default_web_xml
@@ -123,6 +124,10 @@ module ApacheTomcatInstance
           action :delete
         end if new_resource.bundle_webapps_managed.include? webapp
       end
+    end
+
+    def config_resource_exist?(type)
+      Chef::Log.warn(run_context.resource_collection.select { |r| r.resource_name == :apache_tomcat_config && r. })
     end
 
     class_eval do
