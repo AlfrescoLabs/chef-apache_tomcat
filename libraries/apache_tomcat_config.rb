@@ -88,7 +88,7 @@ module ApacheTomcatConfig
         Chef::Log.debug(
           "#{log_prefix}: Using attributes from apache_tomcat_instance[#{new_resource.instance}]"
         )
-        @instance_resource = resources.first
+        resources.first
       else
         fail(
           "#{log_prefix}: Could not find apache_tomcat_instance[#{new_resource.instance}]"
