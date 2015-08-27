@@ -54,10 +54,6 @@ module ApacheTomcatConfig
       filename = ''
       case new_resource.type
       when :server, :web, :context
-        if new_resource.name != new_resource.type.to_s
-          Chef::Log.warn('Name should be the same as type when type is :context, :web, or :server')
-          Chef::Log.warn('Duplicate resources could exist otherwise.')
-        end
         filename = new_resource.type.to_s
       when :entity
         filename = new_resource.name.to_s

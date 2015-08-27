@@ -32,15 +32,6 @@ module ApacheTomcatInstance
               option_collector: true,
               template: true,
               default_source: 'setenv.sh.erb'
-    attribute :create_default_web_xml,
-              kind_of: [TrueClass, FalseClass],
-              default: true
-    attribute :create_default_server_xml,
-              kind_of: [TrueClass, FalseClass],
-              default: true
-    attribute :create_default_context_xml,
-              kind_of: [TrueClass, FalseClass],
-              default: true
     attribute :bundle_webapps_enabled,
               kind_of: Array,
               default: []
@@ -56,7 +47,6 @@ module ApacheTomcatInstance
 
     def action_create
       notifying_block do
-        config_resource_exist?(:web)
         create_instance_directories
         create_setenv_file if new_resource.setenv_options
         create_web_xml if new_resource.create_default_web_xml
@@ -127,7 +117,24 @@ module ApacheTomcatInstance
     end
 
     def config_resource_exist?(type)
-      Chef::Log.warn(run_context.resource_collection.select { |r| r.resource_name == :apache_tomcat_config && r. })
+      resources = run_context.resource_collection.select do |r|
+        r.resource_name == :apache_tomcat_config && r.type == type && r.instance == new_resource.name
+      end
+
+      if resources.length == 1
+        Chef::Log.debug("#{log_prefix}: Not creating default #{type} XML. Found '#{resources[0].name}'")
+        true
+      elsif resources.length > 1
+        resource_names = resources.map { |r| r.name }
+        Chef::Log.warn("#{log_prefix}: Found multiple #{type} XML resources #{resource_names}")
+      else
+        Chef::Log.debug("#{log_prefix}: Creating default #{type} XML. No other #{type} XML resource found.")
+        false
+      end
+    end
+
+    def log_prefix
+      "apache_tomcat_instance[#{new_resource.name}]"
     end
 
     class_eval do
