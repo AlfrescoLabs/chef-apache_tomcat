@@ -17,18 +17,12 @@ require 'poise_service/service_mixin'
 module ApacheTomcatService
   class Resource < Chef::Resource
     include PoiseService::ServiceMixin
+    poise_subresource :apache_tomcat_instance
 
     provides :apache_tomcat_service
 
     attribute :instance, kind_of: String, name_attribute: true
     attribute :java_home, kind_of: String, default: '/usr'
-    attribute :catalina_home,
-              kind_of: String,
-              default: '/usr/share/tomcat'
-    attribute :catalina_base,
-              kind_of: String,
-              default: lazy { "/opt/tomcat/#{instance}" }
-    attribute :user, kind_of: String, default: 'tomcat'
     attribute :restart_on_update, kind_of: [TrueClass, FalseClass], default: true
 
     def service_name
@@ -47,14 +41,22 @@ module ApacheTomcatService
 
     def service_options(service)
       service.command(new_resource.command)
-      service.directory(new_resource.catalina_home)
+      service.directory(grandparent.catalina_home)
       service.environment(
-        CATALINA_HOME: new_resource.catalina_home,
-        CATALINA_BASE: new_resource.catalina_base,
+        CATALINA_HOME: grandparent.catalina_home,
+        CATALINA_BASE: parent.instance_dir,
         JAVA_HOME: new_resource.java_home
       )
-      service.user(new_resource.user)
+      service.user(grandparent.user)
       service.restart_on_update(new_resource.restart_on_update)
+    end
+
+    def parent
+      new_resource.parent
+    end
+
+    def grandparent
+      new_resource.parent.parent
     end
   end
 end

@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <%- if @entities %>
 <!DOCTYPE server-xml [
-<%- @entities.each do |name, file| %>
-  <!ENTITY <%= name %> SYSTEM "<%= !file ? "#{name}.xml" : file %>">
+<%- @entities.each do |entity| %>
+  <!ENTITY <%= entity %> SYSTEM "<%= "#{@entities_dir}/#{entity}.xml" %>">
 <%- end %>
 ]>
 <%- end -%>
@@ -30,9 +30,9 @@
 <%- end %>
 <%-
 if @entities
-  @entities.each do |name, _|
+  @entities.each do |entity|
 %>
-    &<%= name %>;
+    &<%= entity %>;
 <%-
   end
 end

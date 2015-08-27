@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: apache_tomcat_test
-# Spec:: apache_tomcat
+# Recipe:: custom
 #
 # Copyright 2015 Drew A. Blessing
 #
@@ -16,14 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'spec_helper'
+apache_tomcat 'tomcat'
 
-describe 'apache_tomcat_test::default' do
-  context 'with default attributes' do
-    recipe 'apache_tomcat_test::default'
-    step_into :apache_tomcat
-
-    it { is_expected.to create_user('tomcat') }
-    it { is_expected.to create_directory('/opt/tomcat').with(user: 'tomcat', group: 'tomcat') }
+apache_tomcat_instance 'instance1' do
+  apache_tomcat_config 'server' do
+    apache_tomcat_entity 'foo'
   end
+  apache_tomcat_config 'web' do
+    apache_tomcat_entity 'foo'
+  end
+
+  apache_tomcat_service 'instance1'
 end

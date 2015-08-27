@@ -2,7 +2,7 @@
 <%- if @entities %>
 <!DOCTYPE server-xml [
 <%- @entities.each do |entity| %>
-  <!ENTITY <%= entity %> SYSTEM "<%= entity %>.xml">
+  <!ENTITY <%= entity %> SYSTEM "<%= "#{@entities_dir}/#{entity}.xml" %>">
 <%- end %>
 ]>
 <%- end -%>
