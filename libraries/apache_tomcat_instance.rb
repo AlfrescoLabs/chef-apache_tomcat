@@ -49,9 +49,9 @@ module ApacheTomcatInstance
       notifying_block do
         create_instance_directories
         create_setenv_file if new_resource.setenv_options
-        create_web_xml if new_resource.create_default_web_xml
-        create_server_xml if new_resource.create_default_server_xml
-        create_context_xml if new_resource.create_default_context_xml
+        create_web_xml unless config_resource_exist?(:web)
+        create_server_xml unless config_resource_exist?(:server)
+        create_context_xml unless config_resource_exist?(:context)
       end
       new_resource.bundle_webapps_enabled ? deploy_bundle_wars : undeploy_managed_bundle_wars
     end
