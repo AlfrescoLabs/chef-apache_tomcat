@@ -81,7 +81,7 @@ module ApacheTomcatConfig
         )
         @instance_resource = resources.first
       else
-        raise(
+        fail(
           NotFoundError,
           "#{log_prefix}: Could not find apache_tomcat_instance[#{new_resource.instance}]"
         )

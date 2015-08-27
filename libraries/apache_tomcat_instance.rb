@@ -124,13 +124,19 @@ module ApacheTomcatInstance
       end
 
       if resources.length == 1
-        Chef::Log.debug("#{log_prefix}: Not creating default #{type} XML. Found '#{resources[0].name}'")
+        Chef::Log.debug(
+          "#{log_prefix}: Not creating default #{type} XML. Found '#{resources[0].name}'"
+        )
         true
       elsif resources.length > 1
-        resource_names = resources.map { |r| r.name }
-        Chef::Log.warn("#{log_prefix}: Found multiple #{type} XML resources #{resource_names}")
+        resource_names = resources.map(&:name)
+        Chef::Log.warn(
+          "#{log_prefix}: Found multiple #{type} XML resources #{resource_names}"
+        )
       else
-        Chef::Log.debug("#{log_prefix}: Creating default #{type} XML. No other #{type} XML resource found.")
+        Chef::Log.debug(
+          "#{log_prefix}: Creating default #{type} XML. No other #{type} XML resource found."
+        )
         false
       end
     end

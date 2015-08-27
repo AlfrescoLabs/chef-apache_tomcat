@@ -91,7 +91,8 @@ module ApacheTomcat
       dirs.each do |webapp|
         Chef::Log.debug("Preserving #{webapp}.war to #{bundle_war_dir}")
         execute "Preserve #{webapp}.war" do
-          command "/usr/bin/jar cfM #{bundle_war_dir}/#{webapp}.war -C #{home_dir}/webapps/#{webapp} ."
+          command "/usr/bin/jar cfM #{bundle_war_dir}/#{webapp}.war " \
+            "-C #{home_dir}/webapps/#{webapp} ."
           only_if { ::Dir.exist?("#{home_dir}/webapps/#{webapp}") }
         end
       end
