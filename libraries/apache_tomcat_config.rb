@@ -66,7 +66,7 @@ module ApacheTomcatConfig
     end
 
     def instance_config_dir
-      "#{instance.prefix_root}/#{instance.name}/conf"
+      "#{instance.instance_dir}/conf"
     end
 
     def instance

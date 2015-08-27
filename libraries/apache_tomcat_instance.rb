@@ -38,6 +38,10 @@ module ApacheTomcatInstance
     attribute :bundle_webapps_managed,
               kind_of: Array,
               default: []
+
+    def instance_dir
+      "#{prefix_root}/#{name}"
+    end
   end
 
   class Provider < Chef::Provider
@@ -57,7 +61,7 @@ module ApacheTomcatInstance
     end
 
     def instance_dir
-      "#{new_resource.prefix_root}/#{new_resource.name}"
+      new_resource.instance_dir
     end
 
     def create_instance_directories

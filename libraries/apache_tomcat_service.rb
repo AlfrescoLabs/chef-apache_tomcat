@@ -22,13 +22,6 @@ module ApacheTomcatService
 
     attribute :instance, kind_of: String, name_attribute: true
     attribute :java_home, kind_of: String, default: '/usr'
-    # attribute :catalina_home,
-    #           kind_of: String,
-    #           default: '/usr/share/tomcat'
-    # attribute :catalina_base,
-    #           kind_of: String,
-    #           default: lazy { "/opt/tomcat/#{instance}" }
-    # attribute :user, kind_of: String, default: 'tomcat'
     attribute :restart_on_update, kind_of: [TrueClass, FalseClass], default: true
 
     def service_name
@@ -48,7 +41,7 @@ module ApacheTomcatService
     def instance
       resources = run_context.resource_collection.select do |r|
         r.resource_name == :apache_tomcat_instance &&
-          r.name ==  new_resource.instance
+          r.name == new_resource.instance
       end
 
       if resources.length > 0
@@ -72,7 +65,7 @@ module ApacheTomcatService
       service.directory(instance.catalina_home)
       service.environment(
         CATALINA_HOME: instance.catalina_home,
-        CATALINA_BASE: "#{instance.prefix_root}/#{instance.name}",
+        CATALINA_BASE: instance.instance_dir,
         JAVA_HOME: new_resource.java_home
       )
       service.user(instance.user)
