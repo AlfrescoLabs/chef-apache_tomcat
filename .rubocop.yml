@@ -31,7 +31,7 @@ Style/ClosingParenthesisIndentation:
   Enabled: false
 
 Metrics/ClassLength:
-  Max: 101
+  Enabled: false
 
 Style/MultilineOperationIndentation:
   Enabled: false
