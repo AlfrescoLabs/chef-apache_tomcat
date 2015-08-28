@@ -121,11 +121,7 @@ module ApacheTomcatInstance
     end
 
     def config_resource_exist?(type)
-      resources = run_context.resource_collection.select do |r|
-        r.resource_name == :apache_tomcat_config &&
-          r.type == type &&
-          r.instance == new_resource.name
-      end
+      resources = matching_resources(type)
 
       if resources.length == 1
         Chef::Log.debug(
@@ -141,6 +137,31 @@ module ApacheTomcatInstance
         Chef::Log.debug(
           "#{log_prefix}: Creating default #{type} XML. No other #{type} XML resource found."
         )
+        false
+      end
+    end
+
+    def matching_resources(type)
+      [].tap do |array|
+        # Recurse through all contexts if we're in a subcontext
+        if run_context.resource_collection.respond_to?(:recursive_each)
+          run_context.resource_collection.recursive_each do |r|
+            array << r if config_match?(r, type)
+          end
+        else
+          run_context.resource_collection.each do |r|
+            array << r if config_match?(r, type)
+          end
+        end
+      end
+    end
+
+    def config_match?(resource, type)
+      if resource.resource_name == :apache_tomcat_config &&
+         resource.type == type &&
+         resource.instance == new_resource.name
+        true
+      else
         false
       end
     end
