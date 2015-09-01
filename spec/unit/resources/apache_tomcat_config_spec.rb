@@ -18,9 +18,9 @@
 
 require 'spec_helper'
 
-describe 'apache_tomcat_test' do
+describe 'apache_tomcat_config' do
   context 'with default attributes' do
-    recipe 'apache_tomcat_test::default'
+    recipe 'apache_tomcat_test::default_config'
     step_into :apache_tomcat_config
 
     context 'in web.xml' do
@@ -77,7 +77,7 @@ describe 'apache_tomcat_test' do
     context 'in web.xml' do
       it do
         is_expected.to(
-          render_file('/opt/tomcat/instance1/conf/web.xml')
+          render_file('/opt/tomcat/custom/conf/web.xml')
             .with_content(<<eos
     <servlet>
         <servlet-name>my_servlet1</servlet-name>
@@ -112,7 +112,7 @@ eos
 
       it do
         is_expected.to(
-          render_file('/opt/tomcat/instance1/conf/web.xml')
+          render_file('/opt/tomcat/custom/conf/web.xml')
             .with_content(<<eos
     <servlet-mapping>
         <servlet-name>my_servlet1</servlet-name>
@@ -130,7 +130,7 @@ eos
 
       it do
         is_expected.to(
-          render_file('/opt/tomcat/instance1/conf/web.xml')
+          render_file('/opt/tomcat/custom/conf/web.xml')
             .with_content(<<eos
     <filter>
         <filter-name>my_filter1</filter-name>
@@ -163,7 +163,7 @@ eos
 
       it do
         is_expected.to(
-          render_file('/opt/tomcat/instance1/conf/web.xml')
+          render_file('/opt/tomcat/custom/conf/web.xml')
             .with_content(<<eos
     <filter-mapping>
         <filter-name>my_filter1</filter-name>
@@ -183,7 +183,7 @@ eos
 
       it do
         is_expected.to(
-          render_file('/opt/tomcat/instance1/conf/web.xml')
+          render_file('/opt/tomcat/custom/conf/web.xml')
             .with_content(<<eos
     <session-config>
         <session-timeout>15</session-timeout>
@@ -195,7 +195,7 @@ eos
 
       it do
         is_expected.to(
-          render_file('/opt/tomcat/instance1/conf/web.xml')
+          render_file('/opt/tomcat/custom/conf/web.xml')
             .with_content(<<eos
     <welcome-file-list>
         <welcome-file>foobar.html</welcome-file>
@@ -212,13 +212,13 @@ eos
         '<Server port="9005" shutdown="SHUTDOWN" >',
         '<Listener className="org.apache.catalina.startup.VersionLoggerListener" />',
         '<Engine name="Catalina" defaultHost="localhost">',
-        '<!ENTITY engine-custom SYSTEM "engine-custom.xml">',
+        '<!ENTITY engine-custom SYSTEM "/opt/tomcat/custom/conf/entities/engine-custom.xml">',
         '<Listener className="org.mycompany.MyListener" />',
         '&engine-custom;'
       ].each do |content|
         it do
           is_expected.to(
-            render_file('/opt/tomcat/instance1/conf/server.xml')
+            render_file('/opt/tomcat/custom/conf/server.xml')
               .with_content(content)
           )
         end
@@ -226,7 +226,7 @@ eos
 
       it do
         is_expected.to(
-          render_file('/opt/tomcat/instance1/conf/server.xml')
+          render_file('/opt/tomcat/custom/conf/server.xml')
             .with_content(<<eos
     <Listener className="org.mycompany.MyComplexListener"
               SSLEngine="on"
@@ -237,7 +237,7 @@ eos
       end
 
       it do
-        is_expected.not_to render_file('/opt/tomcat/instance1/conf/server.xml')
+        is_expected.not_to render_file('/opt/tomcat/custom/conf/server.xml')
           .with_content('<Realm className="org.apache.catalina.realm.LockOutRealm">')
       end
     end

@@ -16,14 +16,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apache_tomcat 'tomcat'
+apache_tomcat 'tomcat' do
+  user 'my_tomcat'
+  group 'my_tomcat'
+end
 
-apache_tomcat_instance 'instance1'
+apache_tomcat_instance 'custom' do
+  setenv_options do
+    config(
+      [
+        'export CATALINA_OPTS="',
+        '-XX:+UseTLAB -XX:+CMSClassUnloadingEnabled -Xss256k -XX:+UseParNewGC',
+        '-XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75',
+        '-XX:+UseCMSInitiatingOccupancyOnly',
+        '-server"'
+      ]
+    )
+  end
+end
 
 apache_tomcat_config 'web' do
-  type :web
-  instance 'instance1'
-  config_options do
+  options do
     include_defaults false
     include_default_mime_types true
     servlets(
@@ -90,9 +103,7 @@ apache_tomcat_config 'web' do
 end
 
 apache_tomcat_config 'server' do
-  type :server
-  instance 'instance1'
-  config_options do
+  options do
     include_defaults false
     include_default_listeners true
     include_default_engine true

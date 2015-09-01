@@ -29,3 +29,9 @@ Metrics/MethodLength:
 # Cop has no sense of style
 Style/ClosingParenthesisIndentation:
   Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  Enabled: false

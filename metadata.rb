@@ -6,6 +6,7 @@ description      'Installs/Configures tomcat'
 long_description 'Installs/Configures tomcat'
 version          '0.4.1'
 
+depends 'poise', '~> 2.3.2'
 depends 'poise-service', '~> 1.0'
 depends 'ark', '~> 0.9'
 depends 'java', '~> 1.31'

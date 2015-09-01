@@ -18,30 +18,41 @@ module ApacheTomcatConfig
   class Resource < Chef::Resource
     include Poise
 
+    # Sets this resource as a subresource container.
+    # `false` means not to namespace the resources
+    poise_subresource_container false
+
+    # This resource is also a subresource of `apache_tomcat_instance`
+    poise_subresource :apache_tomcat_instance
+
     provides :apache_tomcat_config
     actions :create
 
-    attribute :name, kind_of: String
-    attribute :type,
-              equal_to: [:server, :web, :context, :entity],
-              required: true
-    attribute :instance, kind_of: String, required: true
-    attribute :prefix_root, kind_of: String, default: '/opt/tomcat'
-    attribute :user, kind_of: String, default: 'tomcat'
-    attribute :group, kind_of: String, default: 'tomcat'
-    attribute :config,
-              option_collector: true,
+    attribute :name, equal_to: %w(server web context)
+    # Empty name means no prefix on poise methods: `options`, `content`, `cookbook`
+    # instead of `config_options`, etc.
+    attribute '',
               template: true,
-              default_source: lazy { default_source_check },
-              default_options: { include_defaults: true }
+              default_source: lazy { "#{name}.xml.erb" },
+              default_options: lazy { merge_options }
 
-    def default_source_check
-      if type == :entity && ((!config_source && !config_cookbook) || !config_content)
-        fail Chef::Exceptions::ValidationFailed,
-             'when config \'type\' is \':entity\', \'config_content\' or '\
-             '\'config_source\' and \'config_cookbook\' must be specified'
+    # When defined un-nested, user must set the parent. `instance` is a little better term for users
+    # who may not know or care what a parent/subresource is.
+    alias_method :instance, :parent
+
+    def merge_options
+      if name == 'web'
+        Chef::Log.warn(
+          'apache_tomcat_config[web]: web.xml does not accept ' \
+          'entities. Use a custom web.xml instead.'
+        )
       end
-      "#{type}.xml.erb"
+
+      {
+        include_defaults: true,
+        entities: subresources.map(&:namespaced_name),
+        entities_dir: parent.entities_dir
+      }
     end
   end
 
@@ -51,29 +62,26 @@ module ApacheTomcatConfig
     provides :apache_tomcat_config
 
     def action_create
-      filename = ''
-      case new_resource.type
-      when :server, :web, :context
-        if new_resource.name != new_resource.type.to_s
-          Chef::Log.warn('Name should be the same as type when type is :context, :web, or :server')
-          Chef::Log.warn('Duplicate resources could exist otherwise.')
-        end
-        filename = new_resource.type.to_s
-      when :entity
-        filename = new_resource.name.to_s
-      end
       notifying_block do
-        file "#{instance_config_dir}/#{filename}.xml" do
-          owner new_resource.user
-          group new_resource.group
+        file "#{instance_config_dir}/#{new_resource.name}.xml" do
+          owner grandparent.user
+          group grandparent.group
           mode '0640'
-          content new_resource.config_content
+          content new_resource.content
         end
       end
     end
 
     def instance_config_dir
-      "#{new_resource.prefix_root}/#{new_resource.instance}/conf"
+      "#{parent.instance_dir}/conf"
+    end
+
+    def parent
+      new_resource.parent
+    end
+
+    def grandparent
+      new_resource.parent.parent
     end
   end
 end

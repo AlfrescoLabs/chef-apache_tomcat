@@ -14,9 +14,11 @@
 
 require 'chefspec'
 require 'chefspec/berkshelf'
+require 'poise'
 require 'halite/spec_helper'
 require_relative '../libraries/apache_tomcat'
 require_relative '../libraries/apache_tomcat_config'
+require_relative '../libraries/apache_tomcat_entity'
 require_relative '../libraries/apache_tomcat_instance'
 require_relative '../libraries/apache_tomcat_service'
 

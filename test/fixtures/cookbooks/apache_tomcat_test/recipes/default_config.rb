@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: tomcat
+# Cookbook Name:: apache_tomcat_test
 # Recipe:: default
 #
 # Copyright 2015 Drew A. Blessing
@@ -16,4 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Recipe intentionally left blank. Use resources instead.
+apache_tomcat 'tomcat'
+
+apache_tomcat_instance 'instance1'
+apache_tomcat_config 'web'
+apache_tomcat_config 'server'
+
+apache_tomcat_service 'instance1'

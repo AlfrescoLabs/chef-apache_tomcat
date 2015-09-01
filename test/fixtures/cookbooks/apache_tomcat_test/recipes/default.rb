@@ -16,18 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apache_tomcat 'tomcat'
-
-apache_tomcat_instance 'instance1'
-
-apache_tomcat_config 'web' do
-  type :web
-  instance 'instance1'
+apache_tomcat 'tomcat' do
+  apache_tomcat_instance 'instance1' do
+    apache_tomcat_service 'instance1'
+  end
 end
-
-apache_tomcat_config 'server' do
-  type :server
-  instance 'instance1'
-end
-
-apache_tomcat_service 'instance1'
