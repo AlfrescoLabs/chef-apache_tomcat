@@ -1,5 +1,9 @@
 # Changelog
 
+0.5.1
+---------
+- Fix incorrect examples in README.md
+
 0.5.0
 ---------
 - Add auto-detection of related configuration resources. See README.md for

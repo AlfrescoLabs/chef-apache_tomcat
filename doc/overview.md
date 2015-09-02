@@ -434,11 +434,11 @@ apache_tomcat 'my_tomcat' do
   apache_tomcat_instance 'instance1' do
     apache_tomcat_config 'context' do
       # Look for a template file in your wrapper cookbook
-      config_source 'custom_connector.erb'
-      config_cookbook 'my_wrapper_cookbook'
+      source 'custom_connector.erb'
+      cookbook 'my_wrapper_cookbook'
       # Optionally, pass hash key/values to `config_options` if your custom template
       # needs variables
-      config_options do
+      options do
         custom_variable1 'value1'
         custom_variable2 'value2'
       end
@@ -506,7 +506,7 @@ The following attributes were changed in this version:
 - `catalina_home` - Moved from `apache_tomcat_instance`. Defaults to 
   `/usr/share/tomcat-<version>`.
 
-*`apache_tomcat_instance` resource:*
+#### *`apache_tomcat_instance` resource:*
 
 **Removed:**
 
@@ -528,6 +528,7 @@ The following attributes were changed in this version:
 - Entity is no longer defined using `apache_tomcat_config`. See new resource `apache_tomcat_entity`.
   
 **Changed:**
+
 - `config_*` ( **Renamed**: Rather than `config_options`, `config_content`, or `config_source`, the prefix no longer 
   exists. Simply use `options`, `content`, `source`.
 - `options` attribute (formerly `config_options`, see above) no longer accepts `entities` as
