@@ -27,6 +27,9 @@ like `server.xml`, `web.xml` go in `conf` and applications are deployed in `weba
 might expect. This not only allows for multiple instances running a single version of Tomcat,
 but multiple versions can be installed simultaneously.
 
+This cookbook does not manage Java. Install your choice of Java versions using another cookbook.
+I recommend the [`java` community cookbook](https://supermarket.chef.io/cookbooks/java) on the Supermarket
+
 ### Complete, basic usage example
 
 To use the resources in this cookbook start by created a dependency in your wrapper
@@ -436,11 +439,11 @@ apache_tomcat 'my_tomcat' do
   apache_tomcat_instance 'instance1' do
     apache_tomcat_config 'context' do
       # Look for a template file in your wrapper cookbook
-      config_source 'custom_connector.erb'
-      config_cookbook 'my_wrapper_cookbook'
+      source 'custom_connector.erb'
+      cookbook 'my_wrapper_cookbook'
       # Optionally, pass hash key/values to `config_options` if your custom template
       # needs variables
-      config_options do
+      options do
         custom_variable1 'value1'
         custom_variable2 'value2'
       end
@@ -508,7 +511,7 @@ The following attributes were changed in this version:
 - `catalina_home` - Moved from `apache_tomcat_instance`. Defaults to
   `/usr/share/tomcat-<version>`.
 
-*`apache_tomcat_instance` resource:*
+#### *`apache_tomcat_instance` resource:*
 
 **Removed:**
 
@@ -530,6 +533,7 @@ The following attributes were changed in this version:
 - Entity is no longer defined using `apache_tomcat_config`. See new resource `apache_tomcat_entity`.
 
 **Changed:**
+
 - `config_*` ( **Renamed**: Rather than `config_options`, `config_content`, or `config_source`, the prefix no longer
   exists. Simply use `options`, `content`, `source`.
 - `options` attribute (formerly `config_options`, see above) no longer accepts `entities` as
@@ -615,7 +619,6 @@ Add the following alias in `~/.bash_profile`.
 * poise (~> 2.3.2)
 * poise-service (~> 1.0)
 * ark (~> 0.9)
-* java (~> 1.31)
 
 # Attributes
 

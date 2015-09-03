@@ -25,6 +25,9 @@ like `server.xml`, `web.xml` go in `conf` and applications are deployed in `weba
 might expect. This not only allows for multiple instances running a single version of Tomcat,
 but multiple versions can be installed simultaneously. 
 
+This cookbook does not manage Java. Install your choice of Java versions using another cookbook.
+I recommend the [`java` community cookbook](https://supermarket.chef.io/cookbooks/java) on the Supermarket
+
 ### Complete, basic usage example
 
 To use the resources in this cookbook start by created a dependency in your wrapper
