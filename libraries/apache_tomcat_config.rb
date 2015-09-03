@@ -41,7 +41,8 @@ module ApacheTomcatConfig
     alias_method :instance, :parent
 
     def merge_options
-      if name == 'web'
+      entities = subresources.map(&:namespaced_name)
+      if name == 'web' && entities.length > 0
         Chef::Log.warn(
           'apache_tomcat_config[web]: web.xml does not accept ' \
           'entities. Use a custom web.xml instead.'
@@ -50,7 +51,7 @@ module ApacheTomcatConfig
 
       {
         include_defaults: true,
-        entities: subresources.map(&:namespaced_name),
+        entities: entities,
         entities_dir: parent.entities_dir
       }
     end

@@ -59,7 +59,7 @@ module ApacheTomcat
 
     def create_instance_directory
       # Main directory for all instances, regardless of version
-      unless Dir.exist?(new_resource.instance_root)
+      unless Dir.exist?(new_resource.instance_root) #~FC023
         directory new_resource.instance_root do
           owner new_resource.user
           group new_resource.group
@@ -83,7 +83,6 @@ module ApacheTomcat
     def install_archive
       Chef::Log.debug("Installing #{new_resource.name} from archive")
       ark new_resource.name do
-        action :put # don't create 'friendly' symlink
         url new_resource.url
         checksum new_resource.checksum
         version new_resource.version
