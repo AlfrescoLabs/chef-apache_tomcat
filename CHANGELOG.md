@@ -1,5 +1,13 @@
 # Changelog
 
+0.5.2
+---------
+- Fix 0.5.0 and 0.5.1 DOA bug. When `ark` resource action was changed to `:put` it changed the download path. 
+  This utterly and hopelessly broke everything.
+- Fix incorrect warning message about `apache_tomcat_config[web]` resource not supporting entities (when no web config
+  actually had an entity specified)
+- Fix Foodcritic annoyance  
+
 0.5.1
 ---------
 - Fix incorrect examples in README.md
