@@ -30,7 +30,11 @@ module ApacheTomcatService
     end
 
     def command
-      'bin/catalina.sh run'
+      "#{grandparent.catalina_home}/bin/catalina.sh run"
+    end
+
+    def grandparent
+      parent.parent
     end
   end
 
@@ -56,7 +60,7 @@ module ApacheTomcatService
     end
 
     def grandparent
-      new_resource.parent.parent
+      new_resource.grandparent
     end
   end
 end

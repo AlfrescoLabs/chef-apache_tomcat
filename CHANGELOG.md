@@ -4,6 +4,7 @@ Next release
 ---------
 - Remove `java` cookbook dependency. This was not used, except for testing in kitchen. For testing purposes, the
   dependency was moved to the test fixture cookbook instead. The purpose of this cookbook was not to manage Java.
+- Change relative service command to fully-qualified path. This fixes systemd service manager.est
 
 0.5.1
 ---------
