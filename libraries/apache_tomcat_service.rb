@@ -40,7 +40,7 @@ module ApacheTomcatService
     provides :apache_tomcat_service
 
     def service_options(service)
-      service.command(new_resource.command)
+      service.command("#{grandparent.catalina_home}/#{new_resource.command}")
       service.directory(grandparent.catalina_home)
       service.environment(
         CATALINA_HOME: grandparent.catalina_home,
