@@ -32,7 +32,11 @@ module ApacheTomcatInstance
     attribute :setenv,
               option_collector: true,
               template: true,
-              default_source: 'setenv.sh.erb'
+              default_source: 'config-file.erb'
+    attribute :setcron,
+              option_collector: true,
+              template: true,
+              default_source: 'config-file.erb'
     attribute :bundle_webapps_enabled,
               kind_of: Array,
               default: []
@@ -47,6 +51,10 @@ module ApacheTomcatInstance
     def entities_dir
       "#{instance_dir}/conf/entities"
     end
+
+    def instance_name
+      "#{name}"
+    end
   end
 
   class Provider < Chef::Provider
@@ -58,6 +66,7 @@ module ApacheTomcatInstance
       notifying_block do
         create_instance_directories
         create_setenv_file if new_resource.setenv_options
+        create_setcron_file if new_resource.setcron_options
         create_web_xml unless config_resource_exist?('web')
         create_server_xml unless config_resource_exist?('server')
         create_context_xml unless config_resource_exist?('context')
@@ -92,6 +101,15 @@ module ApacheTomcatInstance
     def create_setenv_file
       file "#{instance_dir}/bin/setenv.sh" do
         content new_resource.setenv_content
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+    end
+
+    def create_setcron_file
+      file "/etc/cron.d/#{instance_name}-cleaner.cron" do
+        content new_resource.setcron_content
         owner parent.user
         group parent.group
         mode '0750'
@@ -165,6 +183,10 @@ module ApacheTomcatInstance
 
     def instance_dir
       new_resource.instance_dir
+    end
+
+    def instance_name
+      new_resource.instance_name
     end
 
     def parent
