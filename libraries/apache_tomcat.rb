@@ -50,8 +50,8 @@ module ApacheTomcat
     def action_install
       notifying_block do
         create_user
-        create_instance_directory
         install_archive
+        create_instance_directory
         preserve_bundle_wars
         remove_unnecessary_files
       end

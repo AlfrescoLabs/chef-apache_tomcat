@@ -87,18 +87,6 @@ module ApacheTomcatInstance
         end
       end
 
-      directory "/var/lib/tomcat-#{name}" do
-        owner parent.user
-        group parent.group
-        mode '0750'
-      end
-
-      directory "/var/cache/tomcat-#{name}" do
-        owner parent.user
-        group parent.group
-        mode '0750'
-      end
-
       link "#{instance_dir}/lib" do
         to lib_dir
         owner parent.user
@@ -106,22 +94,34 @@ module ApacheTomcatInstance
         mode '0750'
       end
 
-      link "/etc/tomcat-#{name}" do
+      link "/etc/tomcat-#{instance_name}" do
         to "#{instance_dir}/conf"
         owner parent.user
         group parent.group
         mode '0750'
       end
 
-      link "/var/lib/tomcat-#{name}/webapps" do
+      directory "/var/lib/tomcat-#{instance_name}" do
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
+      link "/var/lib/tomcat-#{instance_name}/webapps" do
         to "#{instance_dir}/webapps"
         owner parent.user
         group parent.group
         mode '0750'
       end
 
+      directory "/var/cache/tomcat-#{instance_name}" do
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
       %w(work temp).each do |dir|
-        link "/var/cache/tomcat-#{name}/#{dir}" do
+        link "/var/cache/tomcat-#{instance_name}/#{dir}" do
           to "#{instance_dir}/#{dir}"
           owner parent.user
           group parent.group
@@ -129,7 +129,7 @@ module ApacheTomcatInstance
         end
       end
 
-      link "/var/log/tomcat-#{name}" do
+      link "/var/log/tomcat-#{instance_name}" do
         to "#{instance_dir}/logs"
         owner parent.user
         group parent.group
@@ -219,6 +219,14 @@ module ApacheTomcatInstance
 
     def instance_dir
       new_resource.instance_dir
+    end
+
+    def instance_name
+      new_resource.name
+    end
+
+    def lib_dir
+      new_resource.lib_dir
     end
 
     def parent
