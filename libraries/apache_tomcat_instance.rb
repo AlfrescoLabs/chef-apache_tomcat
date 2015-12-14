@@ -47,6 +47,11 @@ module ApacheTomcatInstance
     def entities_dir
       "#{instance_dir}/conf/entities"
     end
+
+    def lib_dir
+      "#{parent.catalina_home}/lib"
+    end
+
   end
 
   class Provider < Chef::Provider
@@ -74,12 +79,61 @@ module ApacheTomcatInstance
       end
 
       # Sub-directories
-      %w(bin conf lib logs temp webapps work).each do |dir|
+      %w(bin conf logs temp webapps work).each do |dir|
         directory "#{instance_dir}/#{dir}" do
           owner parent.user
           group parent.group
           mode '0750'
         end
+      end
+
+      directory "/var/lib/tomcat-#{name}" do
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
+      directory "/var/cache/tomcat-#{name}" do
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
+      link "#{instance_dir}/lib" do
+        to lib_dir
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
+      link "/etc/tomcat-#{name}" do
+        to "#{instance_dir}/conf"
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
+      link "/var/lib/tomcat-#{name}/webapps" do
+        to "#{instance_dir}/webapps"
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
+      %w(work temp).each do |dir|
+        link "/var/cache/tomcat-#{name}/#{dir}" do
+          to "#{instance_dir}/#{dir}"
+          owner parent.user
+          group parent.group
+          mode '0750'
+        end
+      end
+
+      link "/var/log/tomcat-#{name}" do
+        to "#{instance_dir}/logs"
+        owner parent.user
+        group parent.group
+        mode '0750'
       end
 
       directory new_resource.entities_dir do
