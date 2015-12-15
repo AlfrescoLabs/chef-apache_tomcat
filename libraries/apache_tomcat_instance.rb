@@ -87,6 +87,29 @@ module ApacheTomcatInstance
         end
       end
 
+      %w(/etc/tomcat
+      /var/lib/tomcat
+      /var/log/tomcat
+      /var/cache/tomcat).each do |dir|
+        directory dir do
+          owner parent.user
+          group parent.group
+          mode '0750'
+        end
+      end
+
+      directory "/var/lib/tomcat/#{instance_name}" do
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
+      directory "/var/cache/tomcat/#{instance_name}" do
+        owner parent.user
+        group parent.group
+        mode '0750'
+      end
+
       link "#{instance_dir}/lib" do
         to lib_dir
         owner parent.user
@@ -101,20 +124,8 @@ module ApacheTomcatInstance
         mode '0750'
       end
 
-      directory "/var/lib/tomcat/#{instance_name}" do
-        owner parent.user
-        group parent.group
-        mode '0750'
-      end
-
       link "/var/lib/tomcat/#{instance_name}/webapps" do
         to "#{instance_dir}/webapps"
-        owner parent.user
-        group parent.group
-        mode '0750'
-      end
-
-      directory "/var/cache/tomcat/#{instance_name}" do
         owner parent.user
         group parent.group
         mode '0750'
