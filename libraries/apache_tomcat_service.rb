@@ -47,6 +47,9 @@ module ApacheTomcatService
         CATALINA_BASE: parent.instance_dir,
         JAVA_HOME: new_resource.java_home
       )
+      if node['platform_family'] == 'rhel' && node['platform_version'].start_with?('7')
+        service.provider :systemd
+      end
       service.user(grandparent.user)
       service.restart_on_update(new_resource.restart_on_update)
     end
