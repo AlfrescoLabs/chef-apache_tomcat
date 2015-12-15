@@ -94,34 +94,34 @@ module ApacheTomcatInstance
         mode '0750'
       end
 
-      link "/etc/tomcat-#{instance_name}" do
+      link "/etc/tomcat/#{instance_name}" do
         to "#{instance_dir}/conf"
         owner parent.user
         group parent.group
         mode '0750'
       end
 
-      directory "/var/lib/tomcat-#{instance_name}" do
+      directory "/var/lib/tomcat/#{instance_name}" do
         owner parent.user
         group parent.group
         mode '0750'
       end
 
-      link "/var/lib/tomcat-#{instance_name}/webapps" do
+      link "/var/lib/tomcat/#{instance_name}/webapps" do
         to "#{instance_dir}/webapps"
         owner parent.user
         group parent.group
         mode '0750'
       end
 
-      directory "/var/cache/tomcat-#{instance_name}" do
+      directory "/var/cache/tomcat/#{instance_name}" do
         owner parent.user
         group parent.group
         mode '0750'
       end
 
       %w(work temp).each do |dir|
-        link "/var/cache/tomcat-#{instance_name}/#{dir}" do
+        link "/var/cache/tomcat/#{instance_name}/#{dir}" do
           to "#{instance_dir}/#{dir}"
           owner parent.user
           group parent.group
@@ -129,7 +129,7 @@ module ApacheTomcatInstance
         end
       end
 
-      link "/var/log/tomcat-#{instance_name}" do
+      link "/var/log/tomcat/#{instance_name}" do
         to "#{instance_dir}/logs"
         owner parent.user
         group parent.group
