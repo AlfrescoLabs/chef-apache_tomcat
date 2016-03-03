@@ -39,9 +39,16 @@ module ApacheTomcatInstance
     attribute :bundle_webapps_managed,
               kind_of: Array,
               default: []
+    attribute :single_instance,
+              kind_of: [TrueClass, FalseClass],
+              default: false
 
     def instance_dir
-      "#{parent.instance_root}/#{name}"
+      if single_instance
+        "#{parent.instance_root}"
+      else
+        "#{parent.instance_root}/#{name}"
+      end
     end
 
     def entities_dir
@@ -76,11 +83,13 @@ module ApacheTomcatInstance
         owner parent.user
         group parent.group
         mode '0750'
+        not_if { new_resource.single_instance }
       end
 
       # Sub-directories
       %w(bin conf logs temp webapps work).each do |dir|
-        directory "#{instance_dir}/#{dir}" do
+        directory 'Creating sub-directories' do
+          path "#{instance_dir}/#{dir}"
           owner parent.user
           group parent.group
           mode '0750'
@@ -88,8 +97,16 @@ module ApacheTomcatInstance
       end
 
       %w(/etc/tomcat
-      /var/lib/tomcat
-      /var/log/tomcat
+      /var/log/tomcat).each do |dir|
+        directory dir do
+          owner parent.user
+          group parent.group
+          mode '0750'
+          not_if { new_resource.single_instance }
+        end
+      end
+
+      %w(/var/lib/tomcat
       /var/cache/tomcat).each do |dir|
         directory dir do
           owner parent.user
@@ -102,12 +119,14 @@ module ApacheTomcatInstance
         owner parent.user
         group parent.group
         mode '0750'
+        not_if { new_resource.single_instance }
       end
 
       directory "/var/cache/tomcat/#{instance_name}" do
         owner parent.user
         group parent.group
         mode '0750'
+        not_if { new_resource.single_instance }
       end
 
       link "#{instance_dir}/lib" do
@@ -115,16 +134,27 @@ module ApacheTomcatInstance
         owner parent.user
         group parent.group
         mode '0750'
+        not_if { new_resource.single_instance }
       end
 
-      link "/etc/tomcat/#{instance_name}" do
+      link "Linking conf dir" do
+        if new_resource.single_instance
+          target_file "/etc/tomcat"
+        else
+          target_file "/etc/tomcat/#{instance_name}"
+        end
         to "#{instance_dir}/conf"
         owner parent.user
         group parent.group
         mode '0750'
       end
 
-      link "/var/lib/tomcat/#{instance_name}/webapps" do
+      link "Linking webapps dir" do
+        if new_resource.single_instance
+          target_file "/var/lib/tomcat/webapps"
+        else
+          target_file "/var/lib/tomcat/#{instance_name}/webapps"
+        end
         to "#{instance_dir}/webapps"
         owner parent.user
         group parent.group
@@ -132,7 +162,12 @@ module ApacheTomcatInstance
       end
 
       %w(work temp).each do |dir|
-        link "/var/cache/tomcat/#{instance_name}/#{dir}" do
+        link "Linking #{dir} dir" do
+          if new_resource.single_instance
+            target_file "/var/cache/tomcat/#{dir}"
+          else
+            target_file "/var/cache/tomcat/#{instance_name}/#{dir}"
+          end
           to "#{instance_dir}/#{dir}"
           owner parent.user
           group parent.group
@@ -140,14 +175,20 @@ module ApacheTomcatInstance
         end
       end
 
-      link "/var/log/tomcat/#{instance_name}" do
+      link "Linking log folder" do
+        if new_resource.single_instance
+          target_file "/var/log/tomcat"
+        else
+          target_file "/var/log/tomcat/#{instance_name}"
+        end
         to "#{instance_dir}/logs"
         owner parent.user
         group parent.group
         mode '0750'
       end
 
-      directory new_resource.entities_dir do
+      directory "Creating entities dir" do
+        path new_resource.entities_dir
         owner parent.user
         group parent.group
         mode '0750'
@@ -155,7 +196,8 @@ module ApacheTomcatInstance
     end
 
     def create_setenv_file
-      file "#{instance_dir}/bin/setenv.sh" do
+      file "Creating setenv.sh file" do
+        path "#{instance_dir}/bin/setenv.sh"
         content new_resource.setenv_content
         owner parent.user
         group parent.group
@@ -165,7 +207,8 @@ module ApacheTomcatInstance
 
     def deploy_bundle_wars
       new_resource.bundle_webapps_enabled.each do |webapp|
-        file "#{instance_dir}/webapps/#{webapp}.war" do
+        file "Deploying bundle webapp #{webapp}" do
+          path "#{instance_dir}/webapps/#{webapp}.war"
           content IO.read("#{parent.catalina_home}/bundle_wars/#{webapp}.war")
           mode '0644'
           owner parent.user
@@ -179,7 +222,8 @@ module ApacheTomcatInstance
     def undeploy_managed_bundle_wars
       %w(ROOT docs examples host-manager manager).each do |webapp|
         next if new_resource.bundle_webapps_enabled.include? webapp
-        file "#{instance_dir}/webapps/#{webapp}.war" do
+        file "undeploying webapp #{webapp}.war" do
+          path "#{instance_dir}/webapps/#{webapp}.war"
           action :delete
         end if new_resource.bundle_webapps_managed.include? webapp
       end
