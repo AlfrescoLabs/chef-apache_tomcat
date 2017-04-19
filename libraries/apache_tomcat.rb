@@ -37,6 +37,7 @@ module ApacheTomcat
     attribute :instance_root, kind_of: String, default: '/opt/tomcat'
     attribute :user, kind_of: String, default: 'tomcat'
     attribute :group, kind_of: String, default: 'tomcat'
+    attribute :preserve_bundle_wars, kind_of: [TrueClass, FalseClass], default: false
     attribute :catalina_home,
               kind_of: String,
               default: lazy { "/usr/share/tomcat-#{version}" }
@@ -52,7 +53,7 @@ module ApacheTomcat
         create_user
         install_archive
         create_instance_directory
-        preserve_bundle_wars
+        preserve_bundle_wars if new_resource.preserve_bundle_wars
         remove_unnecessary_files
       end
     end
